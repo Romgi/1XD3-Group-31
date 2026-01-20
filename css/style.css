@@ -1,0 +1,25 @@
+/* ===== Global ===== */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #eaeaea;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #000000;
+}
+
+/* ===== Header ===== */
+header {
+    border-bottom: 2px solid #0084ff;
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+}
+
+header h1 {
+    margin-bottom: 6px;
+}
+
+header p {
+    margin-top: 0;
+    color: #b5d9ff;
+}
