@@ -116,15 +116,14 @@ hr {
 }
 
 .tile {
-    display: grid;
-    align-items: center;
-    justify-content: center;
+    display: block;
     border: 1px solid gray;
     border-radius: 6px;
-    padding: 10px;
-    transform: translateY(-2px);
+    padding: 16px;
     box-shadow: 0 4px 10px rgba(27, 27, 28, 0.4);
+    text-align: left;
 }
+
 
 .tile p {
     padding: 10px;
