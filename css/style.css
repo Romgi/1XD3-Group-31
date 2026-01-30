@@ -115,22 +115,26 @@ hr {
     margin: 24px 0;
 }
 
-.tile{
-    display: grid;
-    align-items: center;
-    justify-content: center;
+.tile {
+    display: block;
     border: 1px solid gray;
     border-radius: 6px;
-    transform: translateY(-2px);
+    padding: 16px;
     box-shadow: 0 4px 10px rgba(27, 27, 28, 0.4);
+    text-align: left;
 }
 
-.tile p{
+
+.tile p {
     padding: 10px;
 }
 
-.tile h1{
+.tile h1 {
     padding: 10px;
+}
+
+.container {
+    padding-bottom: 15px;
 }
 
 /* ===== Images ===== */
