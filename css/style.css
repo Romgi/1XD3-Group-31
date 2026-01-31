@@ -37,7 +37,7 @@ header p {
     color: #000000;
 }
 
-/* Make the header image responsive + nicely sized */
+/* Make header images responsive */
 header img {
     width: min(420px, 100%);
     height: auto;
@@ -59,7 +59,8 @@ nav {
     text-decoration: none;
     font-weight: bold;
     border-radius: 6px;
-    transition: background-color 0.2s ease, transform 0.15s ease,
+    transition: background-color 0.2s ease,
+        transform 0.15s ease,
         box-shadow 0.15s ease;
 }
 
@@ -77,12 +78,13 @@ nav {
 
 .nav-link:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #60656a, 0 0 0 4px rgba(45, 46, 48, 0.35);
+    box-shadow: 0 0 0 2px #60656a,
+        0 0 0 4px rgba(45, 46, 48, 0.35);
 }
 
 /* ===== Main Content ===== */
 main {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
 }
 
@@ -95,18 +97,8 @@ section h2 {
     margin-bottom: 10px;
 }
 
-section h3 {
-    margin-top: 20px;
-    color: #b5d9ff;
-}
-
 p {
     margin-bottom: 12px;
-}
-
-ul,
-ol {
-    padding-left: 20px;
 }
 
 hr {
@@ -115,59 +107,106 @@ hr {
     margin: 24px 0;
 }
 
+/* ===== Tile (Card) ===== */
 .tile {
     display: block;
-    border: 1px solid gray;
-    border-radius: 6px;
+    border: 1px solid #b8b8b8;
+    border-radius: 10px;
     padding: 16px;
-    box-shadow: 0 4px 10px rgba(27, 27, 28, 0.4);
-    text-align: left;
+    background-color: #ffffff;
+    box-shadow: 0 6px 16px rgba(27, 27, 28, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-
-.tile p {
-    padding: 10px;
+/* Polished hover/focus for the whole tile */
+.tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(27, 27, 28, 0.16);
+    border-color: #9a9a9a;
 }
 
-.tile h1 {
-    padding: 10px;
+/* If the tile contains focused content (e.g., tabbing onto a button), show a subtle ring */
+.tile:focus-within {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(96, 101, 106, 0.25), 0 10px 22px rgba(27, 27, 28, 0.16);
+    border-color: #7f858b;
 }
 
-.container {
-    padding-bottom: 15px;
+/* ===== About Page Profile Grid ===== */
+.profiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    padding: 8px 0;
+    align-items: stretch;
+    /* ensures equal-height cards per row */
+}
+
+/* Make each profile card a vertical flex column so buttons lock to the bottom */
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-align: center;
+}
+
+.profile-name {
+    margin: 0 0 6px 0;
+}
+
+.profile-role {
+    margin: 0 0 10px 0;
+    opacity: 0.85;
 }
 
 /* ===== Images ===== */
 img {
-    border-radius: 6px;
+    border-radius: 10px;
     border: 1px solid #333;
     margin-top: 10px;
     max-width: 100%;
     height: auto;
 }
 
-/* ===== Link Buttons ===== */
-.link-buttons {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25%;
-    margin-top: 12px;
+/* Profile images: keep centered and give consistent breathing room */
+.profile-card img {
+    margin: 10px auto 12px auto;
 }
 
+/* ===== Link Buttons ===== */
+.link-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+/* Lock button area to the bottom of the tile */
+.profile-card .link-buttons {
+    margin-top: auto;
+    /* KEY: pushes buttons down */
+    padding-top: 16px;
+    /* consistent spacing above button row */
+}
+
+/* Button styling */
 .link-button {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    padding: 10px 12px;
+    padding: 10px 14px;
     background-color: #5d5d5d;
     border: 1px solid #2b2b2b;
     border-radius: 10px;
     text-decoration: none;
     color: #eee !important;
     line-height: 1;
-    box-sizing: border-box;
-    transition: background-color 0.15s ease, transform 0.15s ease,
-        box-shadow 0.15s ease, border-color 0.15s ease;
+    max-width: 320px;
+    width: 100%;
+    transition: background-color 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
 }
 
 .link-button img {
@@ -185,12 +224,12 @@ img {
     background-color: #262626;
     border-color: #3a3a3a;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
 .link-button:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #5a5a5b;
+    box-shadow: 0 0 0 3px rgba(90, 90, 91, 0.45);
 }
 
 /* ===== Footer ===== */
@@ -200,7 +239,6 @@ footer.footer {
     padding: 16px 24px;
     color: #eee !important;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .footer-content {
@@ -223,7 +261,6 @@ footer.footer {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
 .footer-link {
@@ -235,9 +272,8 @@ footer.footer {
     border-radius: 8px;
     text-decoration: none;
     color: #eee !important;
-    line-height: 1;
-    box-sizing: border-box;
-    transition: background-color 0.15s ease, transform 0.15s ease;
+    transition: background-color 0.15s ease,
+        transform 0.15s ease;
 }
 
 .footer-link img {
@@ -256,7 +292,7 @@ footer.footer {
     transform: translateY(-2px);
 }
 
-/* ===== Responsive Design ===== */
+/* ===== Responsive ===== */
 @media (max-width: 600px) {
     body {
         padding: 14px;
@@ -278,18 +314,9 @@ footer.footer {
         text-align: center;
     }
 
-    .footer-links {
-        width: 100%;
-    }
-
+    .footer-links,
     .footer-link {
         width: 100%;
         justify-content: center;
-    }
-}
-
-@media (min-width: 700px) {
-    .link-buttons {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
