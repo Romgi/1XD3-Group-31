@@ -1,0 +1,119 @@
+<!doctype html>
+<!--
+McMaster Concert Band Client Report
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project – Client Report</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Team Development Plan</h1>
+        <p>Client Report – McMaster Concert Band Website & Web Applications</p>
+        <nav>
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="about.html">About</a>
+            <a class="nav-link" href="showcase.html">Showcase</a>
+            <a class="nav-link active" href="project.html">Project</a>
+            <a class="nav-link" href="teamDevPlan.html">Team Development Plan</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="tile">
+            <h1>The Team: JMCH</h1>
+            <p>
+            <ul>
+                <li>Jonathan Graydon</li>
+                <li>Marco Carnegie</li>
+                <li>Charles Chen</li>
+                <li>Hanzhi Jiang</li>
+            </ul>
+            The Group we are designing the website for the is McMaster Concert Band and the name of the app is
+            ConcertHelper
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tile">
+            <h1>The Purpose</h1>
+            <p>
+                The purpose of this app is to provide both a public facing information hub and an internal platform for
+                music distribution and band resources for the McMaster Concert Band. We have chosen to build this
+                particular product because the McMaster concert band faces 2 big problems, Current band members don’t
+                have easy online access to their music parts, reference recordings and season information and
+                concertgoers don’t have easy access to information about the ensemble, upcoming concerts, past
+                performances, and recordings. The goal of our website is to provide ease of access to relevant
+                information for concert goers and current band members.
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tile">
+            <h1>Data Description</h1>
+            <p>The first database table will store the reference recordings for band members sorted by part in ensemble.
+                We need a database to store all reference recordings for each individual part. This information will be
+                for band members
+
+            <ul>
+                <li>recording_id(VARCHAR) - PK</li>
+                <li>part_name(VARCHAR)</li>
+                <li>recording_url (VARCHAR)</li>
+            </ul>
+            The second database table will store the music parts for each instrument based on the current concert being
+            played. We need this table since it will give us the sheet music based on the current concert and part for
+            the band member. This information will be for band members
+
+            <ul>
+                <li>part_id(VARCHAR) - PK</li>
+                <li>instrument_part(VARCHAR)</li>
+                <li>pdf_url (VARCHAR)</li>
+            </ul>
+            The third database table will store past performances of the concert band. It will store urls to MP4s or
+            uploaded YouTube links to past performances. This information will be for band members
+            <ul>
+                <li>concert_id(VARCHAR) - PK</li>
+                <li>concert_url(VARCHAR)</li>
+            </ul>
+            The fourth database table will store information about each member of the ensemble and will include a
+            picture and a basic description. This information will be public
+            <ul>
+                <li>member_id(VARCHAR) - PK</li>
+                <li>photo_url(VARCHAR)</li>
+                <li>description(TEXT)</li>
+            </ul>
+            The fifth database table will store information about any upcoming concerts for the general public
+            <ul>
+                <li>concert_id(VARCHAR)-PK</li>
+                <li>description(TEXT)</li>
+            </ul>
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="container">
+        <div class="tile">
+            <h1>Functons Performed By App</h1>
+            <p>
+            </p>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</body>
+
+</html>
