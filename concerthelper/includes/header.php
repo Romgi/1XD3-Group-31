@@ -35,6 +35,7 @@ $currentRole = currentRole();
                     <a class="<?= e(appNavClass("concerts", $activePage)); ?>" href="concerts.php">Concerts</a>
                     <?php if ($currentRole !== null): ?>
                         <a class="<?= e(appNavClass("dashboard", $activePage)); ?>" href="<?= e(currentDashboardUrl()); ?>">Dashboard</a>
+                        <a class="nav-link" href="logout.php">Logout</a>
                     <?php else: ?>
                         <a class="<?= e(appNavClass("login", $activePage)); ?>" href="login.php">Login</a>
                     <?php endif; ?>
