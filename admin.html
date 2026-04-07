@@ -1,0 +1,192 @@
+<!doctype html>
+<!--
+McMaster Concert Band Client Report
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project - Client Report</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./concerthelper/adminmain.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Admin Page</h1>
+        <p>Create and Remove Concerts, Parts, and References</p>
+        <nav>
+            <a class="nav-link" href="../index.html">Home</a>
+            <a class="nav-link" href="../about.html">About</a>
+            <a class="nav-link" href="../showcase.html">Showcase</a>
+            <a class="nav-link active" href="../project.html">Project</a>
+            <a class="nav-link" href="../teamDevPlan.html">Team Development Plan</a>
+        </nav>
+    </header>
+<!-- <h1>Create a Concert</h1>
+            <form action="" method="" class="form" id="concert">
+                <h2>Please Enter Concert Information</h1>
+                <div class="form-field">
+                    <label class="form-label" for=""></label>
+                    <input class="form-input" type="" id="" name="" placeholder=""
+                        required />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+
+            </form> -->
+    <main>
+        <section class="tile">
+            <h1>Create a Concert</h1>
+            <form action="" method="POST" class="form" id="concert" enctype="multipart/form-data">
+                <h2>Please Enter Concert Information</h1>
+                <div class="form-field">
+                    <label class="form-label" for="concert_name">Concert Name</label>
+                    <input class="form-input" type="text" id="concert_name" name="concert_name" placeholder="Enter Concert Name Here"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="description">Concert Description</label>
+                    <input class="form-input" type="text" id="description" name="description" placeholder="Enter Concert Description Here"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="date">Enter Date Here</label>
+                    <input class="form-input" type="date" id="date" name="date" 
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="recording">Upload Recording if Avalaible</label>
+                    <input class="form-input" type="file" id="recording" name="recording" placeholder=""
+                        />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+
+            </form>
+        </section>
+        <section class="tile">
+            <h1>Create a Part</h1>
+            <h2>Please Enter Part Information</h2>
+            <form action="" method="" class="form" id="part" enctype="multipart/form-data">
+                <div class="form-field">
+                    <label class="form-label" for="concert_name">Concert Name</label>
+                    <input class="form-input" type="text" id="concert_name" name="concert_name" placeholder="Enter the Concert Name"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="instrument_part">Instrument Part</label>
+                    <input class="form-input" type="text" id="instrument_part" name="instrument_part" placeholder="Enter Instrument Part"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="part_pdf">Upload Part</label>
+                    <input class="form-input" type="file" id="part" name="part" placeholder=""
+                        required />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+
+            </form>
+        </section>
+        <section class="tile">
+            <h1>Create a Reference Recording</h1>
+            <h2>Please Enter Recording Information</h2>
+            <form action="" method="" class="form" id="recording_form" enctype="multipart/form-data">
+                <div class="form-field">
+                    <label class="form-label" for="reference_name">Reference Name</label>
+                    <input class="form-input" type="text" id="name" name="reference_name" placeholder="Enter Name Here"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="concert_name">Concert Name</label>
+                    <input class="form-input" type="text" id="concert_name" name="concert_name" placeholder="Enter Concert Name Here"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="instrument_part">Instrument Part</label>
+                    <input class="form-input" type="text" id="instrument_part" name="instrument_part" placeholder="Enter Instrument Part"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="reference_video">Upload Video</label>
+                    <input class="form-input" type="file" id="reference_video" name="reference_video" placeholder=""
+                        required />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+
+            </form>
+
+        </section>
+        <section class="tile">
+            <h1>Link Member</h1>
+            <form action="" method="" class="form" id="link_member">
+                <h2>Please Enter Member Information</h2>
+                <div class="form-field">
+                    <label class="form-label" for="concert_name">Concert Name</label>
+                    <input class="form-input" type="text" id="concert_name" name="concert_name" placeholder="Enter the Concert Name"
+                        required />
+                </div>
+
+
+                <div class="form-field">
+                    <label class="form-label" for="instrument_part">Instrument Part</label>
+                    <input class="form-input" type="text" id="instrument_part" name="instrument_part" placeholder="Enter Instrument Part"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="reference_name">Reference Name</label>
+                    <input class="form-input" type="text" id="name" name="reference_name" placeholder="Enter Name Here"
+                        required />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label" for="member_name">Member Name</label>
+                    <input class="form-input" type="text" id="member_name" name="member_name" placeholder="Enter Member Name here"
+                        required />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+
+            </form>
+        </section>
+
+        <section class="tile">
+            <h1>Create Member</h1>
+            <form action="" method="" class="form" id="create_member">
+                <h2>Please Enter Member Information</h2>
+                <div class="form-field">
+                    <label class="form-label" for="member_name">Member Name</label>
+                    <input class="form-input" type="text" id="member_name" name="member_name" placeholder="Enter Member Name Here"
+                        required />
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="">Description</label>
+                    <input class="form-input" type="text" id="member_description" name="member_description" placeholder="Enter Description Here"
+                        required />
+                </div>
+                <div class="form-field">
+                    <label class="form-label" for="">Photo Upload</label>
+                    <input class="form-input" type="file" id="member_photo" name="member_photo" placeholder=""
+                        />
+                </div>
+
+                <button class="form-btn" type="submit">Submit</button>
+        </section>
+
+
+    </main>
+</body>
+
+</html>
