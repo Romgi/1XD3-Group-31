@@ -30,8 +30,23 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") === "POST") {
 
         if ($role === null) {
             $errors[] = "Email or password is incorrect.";
+        } elseif ($role === ROLE_MEMBER) {
+            try {
+                $memberId = getMemberIdByEmail($email);
+            } catch (PDOException $exception) {
+                error_log("ConcertHelper login member lookup: " . $exception->getMessage());
+                $memberId = null;
+                $errors[] = "Member lookup failed. Confirm the database is set up (see assets/memberDatabases.sql).";
+            }
+            if ($errors === [] && ($memberId ?? null) === null) {
+                $errors[] = "No member profile matches this email.";
+            }
+            if ($errors === []) {
+                signIn($role, $memberId);
+                redirectTo(dashboardUrlForRole($role));
+            }
         } else {
-            signIn($role);
+            signIn($role, null);
             redirectTo(dashboardUrlForRole($role));
         }
     }
