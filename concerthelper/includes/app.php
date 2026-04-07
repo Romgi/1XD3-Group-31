@@ -31,19 +31,23 @@ function loginRole(string $email, string $password): ?string
 {
     $email = strtolower(trim($email));
 
-    if ($password !== "concerthelper") {
+    $db = getDb();
+    $statement = $db->prepare(
+        "SELECT role, password_hash
+         FROM users
+         WHERE email = :email
+         LIMIT 1"
+    );
+    $statement->execute(["email" => $email]);
+    $user = $statement->fetch();
+
+    if (!is_array($user) || !password_verify($password, (string) ($user["password_hash"] ?? ""))) {
         return null;
     }
 
-    if ($email === "admin@mcmaster.ca") {
-        return ROLE_ADMIN;
-    }
+    $role = (string) ($user["role"] ?? "");
 
-    if ($email === "macid1@mcmaster.ca") {
-        return ROLE_MEMBER;
-    }
-
-    return null;
+    return in_array($role, [ROLE_ADMIN, ROLE_MEMBER], true) ? $role : null;
 }
 
 function signIn(string $role): void
