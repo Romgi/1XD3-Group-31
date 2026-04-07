@@ -1,30 +1,68 @@
 <?php
+declare(strict_types=1);
 
-include "./includes/connect.php";
+require_once __DIR__ . "/includes/app.php";
 
-$name = $_POST["concert_name"];
-$description= $_POST["description"];
-$date = $_POST["date"];
-$recordingpath = NULL;
+requireRole([ROLE_ADMIN]);
 
-if(isset($_FILES["recording"]) && $_FILES['recording']['error'] === UPLOAD_ERR_OK){
-    $ext = pathinfo($_FILES['recording']['name'], PATHINFO_EXTENSION);
-    $newName = uniqid() . "." . $ext;
-    $recordingpath = "./assets/uploads/performances" . $newName;
-    move_uploaded_file($_FILES['recording']['tmp_name'], $recordingpath);
+if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
+    adminJsonResponse(false, "POST is required.", 405);
 }
 
+$title = trim((string) ($_POST["title"] ?? $_POST["concert_name"] ?? ""));
+$concertId = trim((string) ($_POST["concert_id"] ?? ""));
+$description = trim((string) ($_POST["description"] ?? ""));
+$date = trim((string) ($_POST["date"] ?? ""));
+$startTime = trim((string) ($_POST["start_time"] ?? ""));
+$location = trim((string) ($_POST["location"] ?? ""));
+$status = trim((string) ($_POST["status"] ?? "upcoming"));
+$performanceUrl = trim((string) ($_POST["performance_url"] ?? ""));
 
-$cmd = "INSERT INTO concerts (concert_id, description, concert_date, performence_file_name)
-        VALUES (?,?,?,?)";
-$stmt = $dbh->prepare($cmd);
-$result = $stmt->execute([$name, $description, $date,$recordingpath]);
-
-
-if ($result) {
-    echo "Insert successful! Row ID: " . $dbh->lastInsertId();
-} else {
-    echo "ERROR: Execute failed: ";
-    var_dump($stmt->errorInfo());
+if ($title === "" || $description === "" || $date === "") {
+    adminJsonResponse(false, "Enter a concert title, description, and date.", 422);
 }
 
+if (!in_array($status, ["upcoming", "past"], true)) {
+    adminJsonResponse(false, "Choose a valid concert status.", 422);
+}
+
+if ($concertId === "") {
+    $concertId = adminSlugId($title);
+}
+
+try {
+    $performanceFileName = saveUploadedFile("recording", PERFORMANCES_UPLOAD_DIR, ["mp3", "mp4", "m4a", "mov", "wav", "webm"]);
+
+    $db = getDb();
+    $statement = $db->prepare(
+        "INSERT INTO concerts
+            (concert_id, title, description, concert_date, start_time, location, status, performance_file_name, performance_url)
+         VALUES
+            (:concert_id, :title, :description, :concert_date, :start_time, :location, :status, :performance_file_name, :performance_url)
+         ON DUPLICATE KEY UPDATE
+            title = VALUES(title),
+            description = VALUES(description),
+            concert_date = VALUES(concert_date),
+            start_time = VALUES(start_time),
+            location = VALUES(location),
+            status = VALUES(status),
+            performance_file_name = COALESCE(VALUES(performance_file_name), performance_file_name),
+            performance_url = VALUES(performance_url)"
+    );
+    $statement->execute([
+        ":concert_id" => $concertId,
+        ":title" => $title,
+        ":description" => $description,
+        ":concert_date" => $date,
+        ":start_time" => $startTime !== "" ? $startTime : null,
+        ":location" => $location !== "" ? $location : null,
+        ":status" => $status,
+        ":performance_file_name" => $performanceFileName,
+        ":performance_url" => $performanceUrl !== "" ? $performanceUrl : null,
+    ]);
+} catch (Throwable $exception) {
+    error_log("ConcertHelper concert create: " . $exception->getMessage());
+    adminJsonResponse(false, "Concert could not be saved.", 500);
+}
+
+adminJsonResponse(true, "Concert saved.");

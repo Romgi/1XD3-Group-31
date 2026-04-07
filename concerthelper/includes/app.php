@@ -121,7 +121,7 @@ function getMembers(): array
 {
     $db = getDb();
     $statement = $db->query(
-        "SELECT member_id, file_name, description, email
+        "SELECT member_id, name, instrument, section, file_name, description, email
          FROM members
          ORDER BY member_id ASC"
     );
@@ -345,6 +345,114 @@ function memberInitials(string $memberId): string
 function appNavClass(string $page, string $activePage): string
 {
     return $page === $activePage ? "nav-link active" : "nav-link";
+}
+
+function adminSlugId(string $value): string
+{
+    $slug = strtolower(trim($value));
+    $slug = preg_replace("/[^a-z0-9]+/", "_", $slug) ?? "";
+    $slug = trim($slug, "_");
+
+    return $slug !== "" ? $slug : uniqid("item_", false);
+}
+
+/**
+ * @return array<int, array<string, string>>
+ */
+function getAdminConcertOptions(): array
+{
+    $db = getDb();
+    $statement = $db->query(
+        "SELECT concert_id, title, concert_date
+         FROM concerts
+         ORDER BY concert_date DESC, title ASC"
+    );
+
+    return $statement->fetchAll();
+}
+
+/**
+ * @return array<int, array<string, string>>
+ */
+function getAdminPartOptions(): array
+{
+    $db = getDb();
+    $statement = $db->query(
+        "SELECT p.part_id, p.instrument_part, c.title AS concert_title
+         FROM parts p
+         INNER JOIN concerts c ON c.concert_id = p.concert_id
+         ORDER BY c.concert_date DESC, c.title ASC, p.instrument_part ASC"
+    );
+
+    return $statement->fetchAll();
+}
+
+/**
+ * @return array<int, array<string, string>>
+ */
+function getAdminRecordingOptions(): array
+{
+    $db = getDb();
+    $statement = $db->query(
+        "SELECT recording_id, part_name
+         FROM recordings
+         ORDER BY created_at DESC, part_name ASC"
+    );
+
+    return $statement->fetchAll();
+}
+
+/**
+ * @return array<int, array<string, string>>
+ */
+function getAdminMemberOptions(): array
+{
+    return getMembers();
+}
+
+/**
+ * @param array<int, string> $allowedExtensions
+ */
+function saveUploadedFile(string $field, string $uploadDir, array $allowedExtensions): ?string
+{
+    if (!isset($_FILES[$field]) || !is_array($_FILES[$field])) {
+        return null;
+    }
+
+    $file = $_FILES[$field];
+    if (($file["error"] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+
+    if (($file["error"] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+        throw new RuntimeException("Upload failed.");
+    }
+
+    $extension = strtolower(pathinfo((string) ($file["name"] ?? ""), PATHINFO_EXTENSION));
+    if ($extension === "" || !in_array($extension, $allowedExtensions, true)) {
+        throw new RuntimeException("Unsupported file type.");
+    }
+
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true)) {
+        throw new RuntimeException("Upload folder could not be created.");
+    }
+
+    $fileName = uniqid("", true) . "." . $extension;
+    $target = $uploadDir . DIRECTORY_SEPARATOR . $fileName;
+
+    if (!move_uploaded_file((string) $file["tmp_name"], $target)) {
+        throw new RuntimeException("Uploaded file could not be saved.");
+    }
+
+    return $fileName;
+}
+
+function adminJsonResponse(bool $ok, string $message, int $status = 200): never
+{
+    http_response_code($status);
+    header("Content-Type: application/json");
+    echo json_encode(["ok" => $ok, "message" => $message]);
+    exit;
 }
 
 

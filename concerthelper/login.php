@@ -5,7 +5,7 @@ require_once __DIR__ . "/includes/app.php";
 
 startAppSession();
 
-$pageTitle = "Member Login";
+$pageTitle = "Login";
 $activePage = "login";
 $errors = [];
 $email = "";
@@ -55,7 +55,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") === "POST") {
 require __DIR__ . "/includes/header.php";
 ?>
 <section class="page-heading">
-    <h1>Member Login</h1>
+    <h1>Login</h1>
 </section>
 
 <?php if ($errors !== []): ?>
@@ -67,7 +67,7 @@ require __DIR__ . "/includes/header.php";
     </section>
 <?php endif; ?>
 
-<section class="auth-card" aria-label="Member login form">
+<section class="auth-card" aria-label="Login form">
     <form class="auth-form" method="post" action="login.php" novalidate>
         <div class="form-field">
             <label for="email">Email:</label>

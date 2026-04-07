@@ -1,38 +1,58 @@
 <?php
+declare(strict_types=1);
 
-include "./includes/connect.php";
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+require_once __DIR__ . "/includes/app.php";
 
-echo "1. PHP started <br>";
+requireRole([ROLE_ADMIN]);
 
-
-$reference_name = $_POST["reference_name"];
-$concert_name = $_POST["concert_name"];
-$instrument_part = $_POST["instrument_part"];
-$recordingpath = NULL;
-
-echo "4. Variables set <br>";
-
-if(isset($_FILES["reference_video"]) && $_FILES['reference_video']['error'] === UPLOAD_ERR_OK){
-    $ext = pathinfo($_FILES['reference_video']['name'], PATHINFO_EXTENSION);
-    $newName = uniqid() . "." . $ext;
-    $recordingpath = "./assets/uploads/reference" . $newName;
-    move_uploaded_file($_FILES['reference_video']['tmp_name'], $recordingpath);
+if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
+    adminJsonResponse(false, "POST is required.", 405);
 }
 
+$referenceName = trim((string) ($_POST["reference_name"] ?? ""));
+$concertId = trim((string) ($_POST["concert_id"] ?? $_POST["concert_name"] ?? ""));
+$partId = trim((string) ($_POST["part_id"] ?? ""));
+$recordingUrl = trim((string) ($_POST["recording_url"] ?? ""));
 
-$cmd = "INSERT INTO recordings (recording_id,concert_id,part_id,file_name)
-        VALUES (?,?,?,?)";
-$stmt = $dbh->prepare($cmd);
-
-echo "5. Statement prepared <br>";
-$result = $stmt->execute([$reference_name,$concert_name,$concert_name.$instrument_part, $recordingpath]);
-echo "6. Execute ran <br>";
-
-if ($result) {
-    echo "Insert successful! Row ID: " . $dbh->lastInsertId();
-} else {
-    echo "ERROR: Execute failed: ";
-    var_dump($stmt->errorInfo());
+if ($referenceName === "" || $concertId === "") {
+    adminJsonResponse(false, "Enter a recording name and choose a concert.", 422);
 }
+
+try {
+    $fileName = saveUploadedFile("reference_video", PERFORMANCES_UPLOAD_DIR, ["mp3", "mp4", "m4a", "mov", "wav", "webm"]);
+    if ($fileName === null && $recordingUrl === "") {
+        adminJsonResponse(false, "Add either a reference URL or a reference file.", 422);
+    }
+
+    $recordingId = adminSlugId($concertId . "_" . $referenceName);
+    $recordingType = $recordingUrl !== "" ? "youtube" : "upload";
+
+    $db = getDb();
+    $statement = $db->prepare(
+        "INSERT INTO recordings
+            (recording_id, concert_id, part_id, part_name, file_name, recording_url, recording_type)
+         VALUES
+            (:recording_id, :concert_id, :part_id, :part_name, :file_name, :recording_url, :recording_type)
+         ON DUPLICATE KEY UPDATE
+            concert_id = VALUES(concert_id),
+            part_id = VALUES(part_id),
+            part_name = VALUES(part_name),
+            file_name = COALESCE(VALUES(file_name), file_name),
+            recording_url = VALUES(recording_url),
+            recording_type = VALUES(recording_type)"
+    );
+    $statement->execute([
+        ":recording_id" => $recordingId,
+        ":concert_id" => $concertId,
+        ":part_id" => $partId !== "" ? $partId : null,
+        ":part_name" => $referenceName,
+        ":file_name" => $fileName,
+        ":recording_url" => $recordingUrl !== "" ? $recordingUrl : null,
+        ":recording_type" => $recordingType,
+    ]);
+} catch (Throwable $exception) {
+    error_log("ConcertHelper reference create: " . $exception->getMessage());
+    adminJsonResponse(false, "Reference recording could not be saved.", 500);
+}
+
+adminJsonResponse(true, "Reference recording saved.");

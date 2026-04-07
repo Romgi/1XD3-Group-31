@@ -1,71 +1,48 @@
-/**
- * Sends an AJAX request to the user.
- */
-window.addEventListener("load", function () {
-    document.getElementById("concert").addEventListener("submit", async (e) => {
+function setAdminStatus(message, isError = false) {
+    const status = document.getElementById("admin-status");
+    if (!status) {
+        return;
+    }
 
-        const formData = new FormData(e.target);
+    status.textContent = message;
+    status.classList.toggle("admin-status-error", isError);
+    status.classList.toggle("admin-status-success", !isError && message !== "");
+}
 
-        let response = await fetch('concert_create.php', {
-            method: "POST",
-            body: formData
-        })
+async function submitAdminForm(form) {
+    const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+            "Accept": "application/json"
+        }
+    });
 
-        const text = await response.text();  // read the body
-        console.log(text);
+    const contentType = response.headers.get("content-type") || "";
+    const payload = contentType.includes("application/json")
+        ? await response.json()
+        : { message: await response.text() };
 
+    if (!response.ok || payload.ok === false) {
+        throw new Error(payload.message || "The request could not be completed.");
+    }
 
-    })
-    document.getElementById("part").addEventListener("submit", async (e) => {
-        const formData = new FormData(e.target);
+    return payload.message || "Saved.";
+}
 
-        let response = await fetch('part_create.php', {
-            method: "POST",
-            body: formData
-        })
+window.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".admin-form").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            setAdminStatus("Saving...");
 
-        const text = await response.text();  // read the body
-        console.log(text);
-
-
-    })
-    document.getElementById("recording_form").addEventListener("submit", async (e) => {
-
-        const formData = new FormData(e.target);
-
-        let response = await fetch('reference_create.php', {
-            method: "POST",
-            body: formData
-        })
-
-        const text = await response.text();  // read the body
-        console.log(text);
-
-    })
-    document.getElementById("link_member").addEventListener("submit", async (e) => {
-        const formData = new FormData(e.target);
-
-        let response = await fetch('memberlink.php', {
-            method: "POST",
-            body: formData
-        })
-
-        const text = await response.text();  // read the body
-        console.log(text);
-
-
-    })
-    document.getElementById("create_member").addEventListener("submit", async (e) => {
-        const formData = new FormData(e.target);
-
-        let response = await fetch('member_create.php', {
-            method: "POST",
-            body: formData
-        })
-
-        const text = await response.text();  // read the body
-        console.log(text);
-
-
-    })
+            try {
+                const message = await submitAdminForm(form);
+                setAdminStatus(message);
+                form.reset();
+            } catch (error) {
+                setAdminStatus(error.message, true);
+            }
+        });
+    });
 });
