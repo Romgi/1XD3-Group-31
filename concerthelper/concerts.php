@@ -1,5 +1,7 @@
 <?php
-require_once "includes/app.php";
+declare(strict_types=1);
+
+require_once __DIR__ . "/includes/app.php";
 
 $pageTitle = "Concerts";
 $activePage = "concerts";
@@ -9,99 +11,121 @@ $error = false;
 try {
     $upcomingStmt = getConcertsByStatus("upcoming");
     $pastStmt = getConcertsByStatus("past");
-} catch (Exception $e) {
+} catch (PDOException $e) {
+    error_log("ConcertHelper concerts page error: " . $e->getMessage());
     $error = true;
 }
 
-require "includes/header.php";
+require __DIR__ . "/includes/header.php";
 ?>
 
-<h1>Concerts</h1>
+<section class="page-heading">
+    <h1>Concerts</h1>
+</section>
 
-<?php
-if ($error) {
-    echo "<p>Something went wrong loading concerts.</p>";
-} else {
-?>
+<?php if ($error): ?>
+    <section class="alert" role="alert">
+        <p>Something went wrong loading concerts.</p>
+    </section>
+<?php else: ?>
 
-<h2>Upcoming Concerts</h2>
+    <section class="concert-section" aria-labelledby="upcoming-concerts">
+        <h2 id="upcoming-concerts">Upcoming Concerts</h2>
 
-<?php
-$hasUpcoming = false;
+        <div class="concert-list">
+            <?php
+            $hasUpcoming = false;
 
-while ($row = $upcomingStmt->fetch()) {
-    $hasUpcoming = true;
+            while ($row = $upcomingStmt->fetch()) {
+                $hasUpcoming = true;
 
-    $title = $row["title"];
-    $desc = $row["description"];
-    $date = $row["concert_date"];
-    $time = $row["start_time"];
-    $location = $row["location"];
-?>
+                $title = (string) ($row["title"] ?? "");
+                $desc = (string) ($row["description"] ?? "");
+                $date = (string) ($row["concert_date"] ?? "");
+                $time = (string) ($row["start_time"] ?? "");
+                $location = (string) ($row["location"] ?? "");
+            ?>
 
-<div>
-    <h3><?= $title ?></h3>
+                <article class="concert-card">
+                    <h3><?= e($title); ?></h3>
 
-    <p><?= $desc ?></p>
+                    <?php if (trim($desc) !== ""): ?>
+                        <p><?= e($desc); ?></p>
+                    <?php endif; ?>
 
-    <p>
-        Date: <?= $date ?><br>
-        Time: <?= $time ? $time : "TBA" ?><br>
-        Location: <?= $location ? $location : "TBA" ?>
-    </p>
-</div>
+                    <dl class="concert-details">
+                        <div>
+                            <dt>Date</dt>
+                            <dd><?= e($date); ?></dd>
+                        </div>
+                        <div>
+                            <dt>Time</dt>
+                            <dd><?= e($time !== "" ? $time : "TBA"); ?></dd>
+                        </div>
+                        <div>
+                            <dt>Location</dt>
+                            <dd><?= e($location !== "" ? $location : "TBA"); ?></dd>
+                        </div>
+                    </dl>
+                </article>
 
-<hr>
+            <?php } ?>
 
-<?php
-}
+            <?php if (!$hasUpcoming): ?>
+                <p class="empty-parts">No upcoming concerts.</p>
+            <?php endif; ?>
+        </div>
+    </section>
 
-if (!$hasUpcoming) {
-    echo "<p>No upcoming concerts.</p>";
-}
-?>
+    <section class="concert-section" aria-labelledby="past-performances">
+        <h2 id="past-performances">Past Performances</h2>
 
-<h2>Past Performances</h2>
+        <div class="concert-list">
+            <?php
+            $hasPast = false;
 
-<?php
-$hasPast = false;
+            while ($row = $pastStmt->fetch()) {
+                $hasPast = true;
 
-while ($row = $pastStmt->fetch()) {
-    $hasPast = true;
+                $title = (string) ($row["title"] ?? "");
+                $desc = (string) ($row["description"] ?? "");
+                $date = (string) ($row["concert_date"] ?? "");
+                $location = (string) ($row["location"] ?? "");
+                $url = trim((string) ($row["performance_url"] ?? ""));
+            ?>
 
-    $title = $row["title"];
-    $desc = $row["description"];
-    $date = $row["concert_date"];
-    $location = $row["location"];
-    $url = $row["performance_url"];
-?>
+                <article class="concert-card">
+                    <h3><?= e($title); ?></h3>
 
-<div>
-    <h3><?= $title ?></h3>
+                    <?php if (trim($desc) !== ""): ?>
+                        <p><?= e($desc); ?></p>
+                    <?php endif; ?>
 
-    <p><?= $desc ?></p>
+                    <dl class="concert-details">
+                        <div>
+                            <dt>Date</dt>
+                            <dd><?= e($date); ?></dd>
+                        </div>
+                        <div>
+                            <dt>Location</dt>
+                            <dd><?= e($location !== "" ? $location : "TBA"); ?></dd>
+                        </div>
+                    </dl>
 
-    <p>
-        Date: <?= $date ?><br>
-        Location: <?= $location ? $location : "TBA" ?>
-    </p>
+                    <?php if ($url !== ""): ?>
+                        <p class="concert-actions">
+                            <a class="button" href="<?= e($url); ?>" target="_blank" rel="noopener noreferrer">Watch Performance</a>
+                        </p>
+                    <?php endif; ?>
+                </article>
 
-    <?php if ($url) { ?>
-        <a href="<?= $url ?>" target="_blank">Watch Performance</a>
-    <?php } ?>
-</div>
+            <?php } ?>
 
-<hr>
+            <?php if (!$hasPast): ?>
+                <p class="empty-parts">No past performances.</p>
+            <?php endif; ?>
+        </div>
+    </section>
 
-<?php
-}
-
-if (!$hasPast) {
-    echo "<p>No past performances.</p>";
-}
-?>
-
-<?php
-}
-require "includes/footer.php";
-?>
+<?php endif; ?>
+<?php require __DIR__ . "/includes/footer.php"; ?>
