@@ -346,3 +346,17 @@ function appNavClass(string $page, string $activePage): string
 {
     return $page === $activePage ? "nav-link active" : "nav-link";
 }
+
+
+
+function getConcertsByStatus($status)
+{
+    $db = getDb();
+
+    $cmd = "SELECT * FROM concerts WHERE status = ? ORDER BY concert_date ASC";
+    $stmt = $db->prepare($cmd);
+
+    $stmt->execute([$status]);
+
+    return $stmt;
+}
