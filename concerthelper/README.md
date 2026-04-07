@@ -16,7 +16,8 @@ Ready for teammate expansion:
 Database notes:
 
 - `includes/connect.php` uses the provided PDO connection with environment variable overrides.
-- `includes/app.php` reads login accounts from the `users` table. The included SQL dump seeds two demo logins so routing works now:
+- Import the repo-root `final_project.sql` file into `graydj1_db` before testing login.
+- `includes/app.php` reads login accounts from the `users` table. `final_project.sql` seeds two demo logins so routing works now:
   - `admin@mcmaster.ca` / `concerthelper`
   - `macid1@mcmaster.ca` / `concerthelper`
 - Member images should be uploaded to `assets/uploads/members/`, with only the generated file name stored in `members.file_name`.

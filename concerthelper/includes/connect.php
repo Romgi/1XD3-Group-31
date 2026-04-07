@@ -12,8 +12,8 @@ declare(strict_types=1);
  *
  * Override with env vars: DB_HOST, DB_NAME, DB_USER, DB_PASS.
  *
- * Defaults match a typical local XAMPP install (root, no password). If you use
- * the course MySQL account instead, set DB_USER / DB_PASS (or edit the fallbacks below).
+ * Defaults match the course database account. Override with environment variables
+ * for local XAMPP or another deployment.
  *
  * @return PDO The database connection.
  */
@@ -21,9 +21,8 @@ function getDb(): PDO
 {
     $host = getenv("DB_HOST") ?: "localhost";
     $db = getenv("DB_NAME") ?: "graydj1_db";
-    $user = getenv("DB_USER") ?: "root";
-    // Empty password is common for local XAMPP; use getenv so course servers can set a real password.
-    $pass = getenv("DB_PASS") !== false ? (string) getenv("DB_PASS") : "";
+    $user = getenv("DB_USER") ?: "graydj1_local";
+    $pass = getenv("DB_PASS") !== false ? (string) getenv("DB_PASS") : ")wt_xR:e";
     $dsn = "mysql:host={$host};dbname={$db};charset=utf8mb4";
 
     return new PDO($dsn, $user, $pass, [

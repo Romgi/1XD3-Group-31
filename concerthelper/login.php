@@ -36,7 +36,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") === "POST") {
             } catch (PDOException $exception) {
                 error_log("ConcertHelper login member lookup: " . $exception->getMessage());
                 $memberId = null;
-                $errors[] = "Member lookup failed. Confirm the database is set up (see assets/memberDatabases.sql).";
+                $errors[] = "Member lookup failed. Confirm the database is set up with final_project.sql.";
             }
             if ($errors === [] && ($memberId ?? null) === null) {
                 $errors[] = "No member profile matches this email.";

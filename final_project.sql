@@ -259,6 +259,40 @@ ON DUPLICATE KEY UPDATE
   `password_hash` = VALUES(`password_hash`),
   `role` = VALUES(`role`);
 
+INSERT INTO `concerts` (`concert_id`, `title`, `description`, `concert_date`, `start_time`, `location`, `status`, `performance_url`) VALUES
+('spring_2026', 'Spring Concert', 'Demo concert for testing member parts and reference recordings.', '2026-04-15', '19:30:00', 'McMaster University', 'upcoming', 'https://www.youtube.com/watch?v=rq1-_UPwYSM')
+ON DUPLICATE KEY UPDATE
+  `title` = VALUES(`title`),
+  `description` = VALUES(`description`),
+  `concert_date` = VALUES(`concert_date`),
+  `start_time` = VALUES(`start_time`),
+  `location` = VALUES(`location`),
+  `status` = VALUES(`status`),
+  `performance_url` = VALUES(`performance_url`);
+
+INSERT INTO `parts` (`part_id`, `concert_id`, `instrument_part`, `file_name`) VALUES
+('spring_2026_clarinet_1', 'spring_2026', 'Clarinet 1', 'Iron_Foundry.pdf')
+ON DUPLICATE KEY UPDATE
+  `concert_id` = VALUES(`concert_id`),
+  `instrument_part` = VALUES(`instrument_part`),
+  `file_name` = VALUES(`file_name`);
+
+INSERT INTO `recordings` (`recording_id`, `concert_id`, `part_id`, `part_name`, `recording_url`, `recording_type`) VALUES
+('spring_2026_clarinet_1_ref', 'spring_2026', 'spring_2026_clarinet_1', 'Clarinet 1', 'https://www.youtube.com/watch?v=rq1-_UPwYSM', 'youtube')
+ON DUPLICATE KEY UPDATE
+  `concert_id` = VALUES(`concert_id`),
+  `part_id` = VALUES(`part_id`),
+  `part_name` = VALUES(`part_name`),
+  `recording_url` = VALUES(`recording_url`),
+  `recording_type` = VALUES(`recording_type`);
+
+INSERT INTO `member_parts` (`member_part_id`, `member_id`, `part_id`, `concert_id`) VALUES
+('macid1_spring_2026_clarinet_1', 'macid1', 'spring_2026_clarinet_1', 'spring_2026')
+ON DUPLICATE KEY UPDATE
+  `member_id` = VALUES(`member_id`),
+  `part_id` = VALUES(`part_id`),
+  `concert_id` = VALUES(`concert_id`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

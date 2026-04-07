@@ -22,8 +22,6 @@ $currentRole = currentRole();
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="wireframe-shell">
-        <h1 class="wireframe-title"><?= e($pageTitle); ?></h1>
-
         <header class="site-header">
             <div class="header-shell">
                 <a class="brand" href="index.php" aria-label="ConcertHelper home">

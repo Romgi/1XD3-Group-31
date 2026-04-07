@@ -134,7 +134,11 @@ function getMemberIdByEmail(string $email): ?string
     $email = strtolower(trim($email));
     $db = getDb();
     $statement = $db->prepare(
-        "SELECT member_id FROM members WHERE LOWER(TRIM(email)) = :email LIMIT 1"
+        "SELECT u.member_id
+         FROM users u
+         INNER JOIN members m ON m.member_id = u.member_id
+         WHERE LOWER(TRIM(u.email)) = :email
+         LIMIT 1"
     );
     $statement->execute([":email" => $email]);
     $row = $statement->fetch();
@@ -152,12 +156,22 @@ function getMemberIdByEmail(string $email): ?string
 function getMemberParts(string $memberId): array
 {
     $db = getDb();
-    // SELECT * so older DBs without youtube_url still load; partPlayUrl() uses the column when present.
     $statement = $db->prepare(
-        "SELECT *
-         FROM member_parts
-         WHERE member_id = :member_id
-         ORDER BY sort_order ASC, member_part_id ASC"
+        "SELECT
+            mp.member_part_id,
+            c.title AS piece_title,
+            p.instrument_part AS part_label,
+            p.file_name AS pdf_file_name,
+            COALESCE(r.file_name, '') AS audio_file_name,
+            r.recording_url AS youtube_url
+         FROM member_parts mp
+         INNER JOIN parts p ON p.part_id = mp.part_id
+         INNER JOIN concerts c ON c.concert_id = mp.concert_id
+         LEFT JOIN recordings r
+            ON r.concert_id = mp.concert_id
+            AND (r.part_id = mp.part_id OR r.part_id IS NULL)
+         WHERE mp.member_id = :member_id
+         ORDER BY c.concert_date ASC, c.title ASC, p.instrument_part ASC, mp.member_part_id ASC"
     );
     $statement->execute([":member_id" => $memberId]);
 
