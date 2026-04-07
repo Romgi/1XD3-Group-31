@@ -1,9 +1,9 @@
     </main>
 
     <footer class="site-footer" aria-label="Footer layout">
-        <span class="footer-panel">Email and Contacts</span>
-        <span class="footer-panel">Copyright &copy;</span>
-        <span class="footer-panel">Social Media Information</span>
+        <a href="https://example.com" class="footer-panel">Email and Contacts</a>
+        <a href="https://example.com" class="footer-panel">Copyright &copy;</a>
+        <a href="https://example.com" class="footer-panel">Social Media Information</a>
     </footer>
     </div>
 </body>
