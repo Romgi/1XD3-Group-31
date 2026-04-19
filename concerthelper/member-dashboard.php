@@ -58,7 +58,7 @@ if ($memberId === null) {
                                     rel="noopener noreferrer"
                                     aria-label="Open PDF for <?= e($label); ?>">PDF</a>
                             <?php else: ?>
-                                <span class="part-icon-missing" title="PDF not on server">—</span>
+                                <span class="part-icon-missing" title="PDF not on server">-</span>
                             <?php endif; ?>
                             <?php if ($playUrl !== null): ?>
                                 <a
@@ -66,9 +66,9 @@ if ($memberId === null) {
                                     href="<?= e($playUrl); ?>"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    aria-label="Open video for <?= e($label); ?> (new tab)">▶</a>
+                                    aria-label="Open recording for <?= e($label); ?> (new tab)">Play</a>
                             <?php else: ?>
-                                <span class="part-icon-missing" title="No external link (youtube_url) or performance file (audio_file_name)">—</span>
+                                <span class="part-icon-missing" title="No external link or performance file">-</span>
                             <?php endif; ?>
                         </span>
                     </li>
@@ -77,7 +77,7 @@ if ($memberId === null) {
         <?php endif; ?>
 
         <p class="wireframe-actions">
-            <a class="button button-pill" href="#">Request a part</a>
+            Part requests are not wired into the app yet. Contact the band admin if you need changes.
         </p>
     </section>
 <?php endif; ?>

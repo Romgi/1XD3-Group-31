@@ -22,15 +22,30 @@ if ($title === "" || $description === "" || $date === "") {
     adminJsonResponse(false, "Enter a concert title, description, and date.", 422);
 }
 
+if (!isValidDateInput($date)) {
+    adminJsonResponse(false, "Enter a valid concert date.", 422);
+}
+
+if ($startTime !== "" && !isValidTimeInput($startTime)) {
+    adminJsonResponse(false, "Enter a valid start time.", 422);
+}
+
 if (!in_array($status, ["upcoming", "past"], true)) {
     adminJsonResponse(false, "Choose a valid concert status.", 422);
+}
+
+if ($performanceUrl !== "" && normalizeExternalMediaUrl($performanceUrl) === null) {
+    adminJsonResponse(false, "Enter a valid performance URL.", 422);
 }
 
 if ($concertId === "") {
     $concertId = adminSlugId($title);
 }
 
+$performanceFileName = null;
+
 try {
+    $performanceUrl = normalizeExternalMediaUrl($performanceUrl);
     $performanceFileName = saveUploadedFile("recording", PERFORMANCES_UPLOAD_DIR, ["mp3", "mp4", "m4a", "mov", "wav", "webm"]);
 
     $db = getDb();
@@ -58,9 +73,15 @@ try {
         ":location" => $location !== "" ? $location : null,
         ":status" => $status,
         ":performance_file_name" => $performanceFileName,
-        ":performance_url" => $performanceUrl !== "" ? $performanceUrl : null,
+        ":performance_url" => $performanceUrl,
     ]);
 } catch (Throwable $exception) {
+    if ($performanceFileName !== null) {
+        $uploadedFile = PERFORMANCES_UPLOAD_DIR . DIRECTORY_SEPARATOR . $performanceFileName;
+        if (is_file($uploadedFile)) {
+            unlink($uploadedFile);
+        }
+    }
     error_log("ConcertHelper concert create: " . $exception->getMessage());
     adminJsonResponse(false, "Concert could not be saved.", 500);
 }

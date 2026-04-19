@@ -98,6 +98,13 @@ function currentDashboardUrl(): string
     return dashboardUrlForRole(currentRole());
 }
 
+function requestWantsJson(): bool
+{
+    $accept = strtolower((string) ($_SERVER["HTTP_ACCEPT"] ?? ""));
+
+    return str_contains($accept, "application/json");
+}
+
 /**
  * @param array<int, string> $allowedRoles
  */
@@ -106,10 +113,16 @@ function requireRole(array $allowedRoles): void
     $role = currentRole();
 
     if ($role === null) {
+        if (requestWantsJson()) {
+            adminJsonResponse(false, "Please sign in again.", 401);
+        }
         redirectTo("login.php");
     }
 
     if (!in_array($role, $allowedRoles, true)) {
+        if (requestWantsJson()) {
+            adminJsonResponse(false, "You do not have access to this action.", 403);
+        }
         redirectTo(currentDashboardUrl());
     }
 }
@@ -123,7 +136,8 @@ function getMembers(): array
     $statement = $db->query(
         "SELECT member_id, name, instrument, section, file_name, description, email
          FROM members
-         ORDER BY member_id ASC"
+         WHERE is_active = 1
+         ORDER BY name ASC, member_id ASC"
     );
 
     return $statement->fetchAll();
@@ -162,14 +176,46 @@ function getMemberParts(string $memberId): array
             c.title AS piece_title,
             p.instrument_part AS part_label,
             p.file_name AS pdf_file_name,
-            COALESCE(r.file_name, '') AS audio_file_name,
-            r.recording_url AS youtube_url
+            COALESCE(
+                (
+                    SELECT r.file_name
+                    FROM recordings r
+                    WHERE r.concert_id = mp.concert_id
+                      AND r.part_id = mp.part_id
+                    ORDER BY r.created_at DESC
+                    LIMIT 1
+                ),
+                (
+                    SELECT r.file_name
+                    FROM recordings r
+                    WHERE r.concert_id = mp.concert_id
+                      AND r.part_id IS NULL
+                    ORDER BY r.created_at DESC
+                    LIMIT 1
+                ),
+                ''
+            ) AS audio_file_name,
+            COALESCE(
+                (
+                    SELECT r.recording_url
+                    FROM recordings r
+                    WHERE r.concert_id = mp.concert_id
+                      AND r.part_id = mp.part_id
+                    ORDER BY r.created_at DESC
+                    LIMIT 1
+                ),
+                (
+                    SELECT r.recording_url
+                    FROM recordings r
+                    WHERE r.concert_id = mp.concert_id
+                      AND r.part_id IS NULL
+                    ORDER BY r.created_at DESC
+                    LIMIT 1
+                )
+            ) AS youtube_url
          FROM member_parts mp
          INNER JOIN parts p ON p.part_id = mp.part_id
          INNER JOIN concerts c ON c.concert_id = mp.concert_id
-         LEFT JOIN recordings r
-            ON r.concert_id = mp.concert_id
-            AND (r.part_id = mp.part_id OR r.part_id IS NULL)
          WHERE mp.member_id = :member_id
          ORDER BY c.concert_date ASC, c.title ASC, p.instrument_part ASC, mp.member_part_id ASC"
     );
@@ -182,16 +228,16 @@ function getMemberDisplayName(string $memberId): string
 {
     $db = getDb();
     $statement = $db->prepare(
-        "SELECT description FROM members WHERE member_id = :id LIMIT 1"
+        "SELECT name FROM members WHERE member_id = :id LIMIT 1"
     );
     $statement->execute([":id" => $memberId]);
     $row = $statement->fetch();
     if ($row === false) {
         return "Member";
     }
-    $description = trim((string) ($row["description"] ?? ""));
-    if ($description !== "") {
-        return $description;
+    $name = trim((string) ($row["name"] ?? ""));
+    if ($name !== "") {
+        return $name;
     }
 
     return "Member";
@@ -215,18 +261,37 @@ function partPdfUrl(?string $fileName): ?string
     return PARTS_UPLOAD_URL . "/" . rawurlencode($safe);
 }
 
+function rowStringValue(array $row, string $column): ?string
+{
+    foreach ($row as $key => $value) {
+        if (!is_string($key)) {
+            continue;
+        }
+        if (strcasecmp($key, $column) !== 0) {
+            continue;
+        }
+        if ($value === null) {
+            return null;
+        }
+
+        return (string) $value;
+    }
+
+    return null;
+}
+
 /**
- * Safe external video URL (YouTube, Vimeo, etc.). DB column is still `youtube_url`.
+ * Safe external media URL (YouTube, Vimeo, Spotify, etc.).
  * Blocks localhost and non-http(s) schemes.
  */
-function partExternalVideoUrl(?string $url): ?string
+function normalizeExternalMediaUrl(?string $url): ?string
 {
     $url = trim((string) ($url ?? ""));
     if ($url === "") {
         return null;
     }
     if (!preg_match('#^https?://#i', $url)) {
-        if (preg_match('#youtube\.com|youtu\.be|vimeo\.com#i', $url)) {
+        if (preg_match('#youtube\.com|youtu\.be|vimeo\.com|spotify\.com#i', $url)) {
             $url = "https://" . preg_replace('#^[/\s]+#', "", $url);
         } else {
             return null;
@@ -248,6 +313,32 @@ function partExternalVideoUrl(?string $url): ?string
 }
 
 /**
+ * Safe external video URL (YouTube, Vimeo, etc.). DB column is still `youtube_url`.
+ */
+function partExternalVideoUrl(?string $url): ?string
+{
+    return normalizeExternalMediaUrl($url);
+}
+
+function recordingTypeForUrl(?string $url): string
+{
+    $normalizedUrl = normalizeExternalMediaUrl($url);
+    if ($normalizedUrl === null) {
+        return "upload";
+    }
+
+    $host = strtolower((string) parse_url($normalizedUrl, PHP_URL_HOST));
+    if (str_contains($host, "youtube.com") || str_contains($host, "youtu.be")) {
+        return "youtube";
+    }
+    if (str_contains($host, "spotify.com")) {
+        return "spotify";
+    }
+
+    return "other";
+}
+
+/**
  * Local video/audio file under assets/uploads/performances/ (basename only).
  */
 function partPerformanceFileUrl(?string $fileName): ?string
@@ -261,66 +352,31 @@ function partPerformanceFileUrl(?string $fileName): ?string
 }
 
 /**
- * Reads youtube_url from a DB row (PDO may use different key casing).
- *
- * @param array<string, mixed> $row
- */
-function partRowYoutubeRaw(array $row): ?string
-{
-    foreach ($row as $key => $value) {
-        if (!is_string($key)) {
-            continue;
-        }
-        if (strcasecmp($key, "youtube_url") !== 0) {
-            continue;
-        }
-        if ($value === null) {
-            return null;
-        }
-
-        return (string) $value;
-    }
-
-    return null;
-}
-
-/**
- * Reads audio_file_name (performance file basename) from a DB row.
- *
- * @param array<string, mixed> $row
- */
-function partRowAudioFileRaw(array $row): ?string
-{
-    foreach ($row as $key => $value) {
-        if (!is_string($key)) {
-            continue;
-        }
-        if (strcasecmp($key, "audio_file_name") !== 0) {
-            continue;
-        }
-        if ($value === null) {
-            return null;
-        }
-
-        return (string) $value;
-    }
-
-    return null;
-}
-
-/**
  * Play: external link (youtube_url column) if set and valid, else file in performances/.
  *
  * @param array<string, mixed> $row
  */
 function partPlayUrl(array $row): ?string
 {
-    $external = partExternalVideoUrl(partRowYoutubeRaw($row));
+    $external = partExternalVideoUrl(rowStringValue($row, "youtube_url"));
     if ($external !== null) {
         return $external;
     }
 
-    return partPerformanceFileUrl(partRowAudioFileRaw($row));
+    return partPerformanceFileUrl(rowStringValue($row, "audio_file_name"));
+}
+
+/**
+ * @param array<string, mixed> $row
+ */
+function concertPerformanceUrl(array $row): ?string
+{
+    $external = normalizeExternalMediaUrl(rowStringValue($row, "performance_url"));
+    if ($external !== null) {
+        return $external;
+    }
+
+    return partPerformanceFileUrl(rowStringValue($row, "performance_file_name"));
 }
 
 function memberPhotoUrl(?string $fileName): ?string
@@ -455,9 +511,26 @@ function adminJsonResponse(bool $ok, string $message, int $status = 200): never
     exit;
 }
 
+function isValidDateInput(string $value): bool
+{
+    $date = DateTimeImmutable::createFromFormat("Y-m-d", $value);
 
+    return $date !== false && $date->format("Y-m-d") === $value;
+}
 
-function getConcertsByStatus($status)
+function isValidTimeInput(string $value): bool
+{
+    $time = DateTimeImmutable::createFromFormat("H:i", $value);
+    if ($time !== false && $time->format("H:i") === $value) {
+        return true;
+    }
+
+    $timeWithSeconds = DateTimeImmutable::createFromFormat("H:i:s", $value);
+
+    return $timeWithSeconds !== false && $timeWithSeconds->format("H:i:s") === $value;
+}
+
+function getConcertsByStatus(string $status): PDOStatement
 {
     $db = getDb();
 

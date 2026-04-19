@@ -28,6 +28,8 @@ if ($memberId === "") {
     $memberId = adminSlugId($memberName);
 }
 
+$photoFileName = null;
+
 try {
     $photoFileName = saveUploadedFile("member_photo", MEMBER_PHOTO_UPLOAD_DIR, ["jpg", "jpeg", "png", "gif", "webp"]);
 
@@ -59,6 +61,12 @@ try {
         ":description" => $description,
     ]);
 } catch (Throwable $exception) {
+    if ($photoFileName !== null) {
+        $uploadedFile = MEMBER_PHOTO_UPLOAD_DIR . DIRECTORY_SEPARATOR . $photoFileName;
+        if (is_file($uploadedFile)) {
+            unlink($uploadedFile);
+        }
+    }
     error_log("ConcertHelper member create: " . $exception->getMessage());
     adminJsonResponse(false, "Member could not be saved.", 500);
 }

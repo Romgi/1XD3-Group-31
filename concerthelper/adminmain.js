@@ -41,7 +41,10 @@ window.addEventListener("DOMContentLoaded", () => {
                 setAdminStatus(message);
                 form.reset();
             } catch (error) {
-                setAdminStatus(error.message, true);
+                const message = error instanceof Error
+                    ? error.message
+                    : "The request could not be completed.";
+                setAdminStatus(message, true);
             }
         });
     });

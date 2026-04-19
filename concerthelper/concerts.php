@@ -91,7 +91,7 @@ require __DIR__ . "/includes/header.php";
                 $desc = (string) ($row["description"] ?? "");
                 $date = (string) ($row["concert_date"] ?? "");
                 $location = (string) ($row["location"] ?? "");
-                $url = trim((string) ($row["performance_url"] ?? ""));
+                $performanceUrl = concertPerformanceUrl($row);
             ?>
 
                 <article class="concert-card">
@@ -112,9 +112,9 @@ require __DIR__ . "/includes/header.php";
                         </div>
                     </dl>
 
-                    <?php if ($url !== ""): ?>
+                    <?php if ($performanceUrl !== null): ?>
                         <p class="concert-actions">
-                            <a class="button" href="<?= e($url); ?>" target="_blank" rel="noopener noreferrer">Watch Performance</a>
+                            <a class="button" href="<?= e($performanceUrl); ?>" target="_blank" rel="noopener noreferrer">Open Performance</a>
                         </p>
                     <?php endif; ?>
                 </article>

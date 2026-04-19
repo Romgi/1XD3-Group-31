@@ -16,14 +16,24 @@ if ($concertId === "" || $instrumentPart === "") {
     adminJsonResponse(false, "Choose a concert and enter an instrument part.", 422);
 }
 
+$fileName = null;
+
 try {
+    $db = getDb();
+    $concertStatement = $db->prepare("SELECT concert_id FROM concerts WHERE concert_id = :concert_id LIMIT 1");
+    $concertStatement->execute([":concert_id" => $concertId]);
+    $concert = $concertStatement->fetch();
+
+    if ($concert === false) {
+        adminJsonResponse(false, "Selected concert could not be found.", 404);
+    }
+
     $fileName = saveUploadedFile("part", PARTS_UPLOAD_DIR, ["pdf"]);
     if ($fileName === null) {
         adminJsonResponse(false, "Upload a PDF part.", 422);
     }
 
     $partId = adminSlugId($concertId . "_" . $instrumentPart);
-    $db = getDb();
     $statement = $db->prepare(
         "INSERT INTO parts (part_id, concert_id, instrument_part, file_name)
          VALUES (:part_id, :concert_id, :instrument_part, :file_name)
@@ -39,6 +49,12 @@ try {
         ":file_name" => $fileName,
     ]);
 } catch (Throwable $exception) {
+    if ($fileName !== null) {
+        $uploadedFile = PARTS_UPLOAD_DIR . DIRECTORY_SEPARATOR . $fileName;
+        if (is_file($uploadedFile)) {
+            unlink($uploadedFile);
+        }
+    }
     error_log("ConcertHelper part create: " . $exception->getMessage());
     adminJsonResponse(false, "Part could not be saved.", 500);
 }

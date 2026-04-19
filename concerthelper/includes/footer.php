@@ -1,9 +1,12 @@
     </main>
 
     <footer class="site-footer" aria-label="Footer layout">
-        <a href="https://example.com" class="footer-panel">Email and Contacts</a>
-        <a href="https://example.com" class="footer-panel">Copyright &copy;</a>
-        <a href="https://example.com" class="footer-panel">Social Media Information</a>
+        <div class="footer-panel">
+            Contact:
+            <a href="mailto:concertband@mcmaster.ca">concertband@mcmaster.ca</a>
+        </div>
+        <div class="footer-panel">McMaster Concert Band</div>
+        <div class="footer-panel">ConcertHelper member portal</div>
     </footer>
     </div>
 </body>

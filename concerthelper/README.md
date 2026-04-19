@@ -6,7 +6,7 @@ Implemented now:
 
 - `login.php` authenticates a configured email/password account and routes admins to `admin-dashboard.php` and members to `member-dashboard.php`.
 - `members.php` loads public ensemble member data from the `members` table.
-- `index.php`, `concerts.php`, `member-dashboard.php`, and `admin-dashboard.php` currently show TODO messages for teammates to fill in later.
+- `index.php`, `concerts.php`, `member-dashboard.php`, and `admin-dashboard.php` render the current app shell, public concert/member views, and admin/member workflows.
 
 Ready for teammate expansion:
 

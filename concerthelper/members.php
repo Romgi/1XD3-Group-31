@@ -49,18 +49,26 @@ require __DIR__ . "/includes/header.php";
                 <?php foreach ($members as $member): ?>
                     <?php
                     $memberId = (string) ($member["member_id"] ?? "");
+                    $memberName = trim((string) ($member["name"] ?? ""));
+                    $instrument = trim((string) ($member["instrument"] ?? ""));
+                    $section = trim((string) ($member["section"] ?? ""));
+                    $description = trim((string) ($member["description"] ?? ""));
                     $photoUrl = memberPhotoUrl($member["file_name"] ?? null);
+                    $summary = trim(implode(" | ", array_filter([$instrument, $section], static fn ($value): bool => $value !== "")));
                     ?>
                     <li class="member-card">
                         <?php if ($photoUrl !== null): ?>
-                            <img class="member-photo" src="<?= e($photoUrl); ?>" alt="<?= e($memberId); ?> profile photo" width="56" height="56">
+                            <img class="member-photo" src="<?= e($photoUrl); ?>" alt="<?= e($memberName !== "" ? $memberName : $memberId); ?> profile photo" width="56" height="56">
                         <?php else: ?>
                             <span class="member-photo-placeholder" aria-hidden="true"><?= e(memberInitials($memberId)); ?></span>
                         <?php endif; ?>
                         <span>
-                            <strong><?= e($memberId); ?></strong>
-                            <?php if (trim((string) ($member["description"] ?? "")) !== ""): ?>
-                                <br><span><?= e($member["description"]); ?></span>
+                            <strong><?= e($memberName !== "" ? $memberName : $memberId); ?></strong>
+                            <?php if ($summary !== ""): ?>
+                                <br><span><?= e($summary); ?></span>
+                            <?php endif; ?>
+                            <?php if ($description !== ""): ?>
+                                <br><span><?= e($description); ?></span>
                             <?php endif; ?>
                         </span>
                     </li>

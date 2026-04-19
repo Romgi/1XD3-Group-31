@@ -19,6 +19,14 @@ if ($memberId === "" || $partId === "") {
 
 try {
     $db = getDb();
+    $memberStatement = $db->prepare("SELECT member_id FROM members WHERE member_id = :member_id LIMIT 1");
+    $memberStatement->execute([":member_id" => $memberId]);
+    $member = $memberStatement->fetch();
+
+    if ($member === false) {
+        adminJsonResponse(false, "Selected member could not be found.", 404);
+    }
+
     $partStatement = $db->prepare("SELECT concert_id FROM parts WHERE part_id = :part_id LIMIT 1");
     $partStatement->execute([":part_id" => $partId]);
     $part = $partStatement->fetch();
@@ -28,6 +36,29 @@ try {
     }
 
     $concertId = (string) $part["concert_id"];
+
+    if ($recordingId !== "") {
+        $recordingStatement = $db->prepare(
+            "SELECT concert_id, part_id
+             FROM recordings
+             WHERE recording_id = :recording_id
+             LIMIT 1"
+        );
+        $recordingStatement->execute([":recording_id" => $recordingId]);
+        $recording = $recordingStatement->fetch();
+
+        if ($recording === false) {
+            adminJsonResponse(false, "Selected recording could not be found.", 404);
+        }
+
+        $recordingConcertId = (string) ($recording["concert_id"] ?? "");
+        $recordingPartId = $recording["part_id"] !== null ? (string) $recording["part_id"] : null;
+
+        if ($recordingConcertId !== $concertId || ($recordingPartId !== null && $recordingPartId !== $partId)) {
+            adminJsonResponse(false, "Selected recording does not match the chosen part.", 422);
+        }
+    }
+
     $db->beginTransaction();
 
     $memberConcertStatement = $db->prepare(
