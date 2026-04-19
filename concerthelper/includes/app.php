@@ -6,8 +6,6 @@ require_once __DIR__ . "/connect.php";
 const APP_NAME = "ConcertHelper";
 const ROLE_ADMIN = "admin";
 const ROLE_MEMBER = "member";
-const MEMBER_PHOTO_UPLOAD_DIR = __DIR__ . "/../assets/uploads/members";
-const MEMBER_PHOTO_UPLOAD_URL = "assets/uploads/members";
 const PARTS_UPLOAD_DIR = __DIR__ . "/../assets/uploads/parts";
 const PARTS_UPLOAD_URL = "assets/uploads/parts";
 const PERFORMANCES_UPLOAD_DIR = __DIR__ . "/../assets/uploads/performances";
@@ -166,7 +164,7 @@ function getMembers(): array
 {
     $db = getDb();
     $statement = $db->query(
-        "SELECT member_id, name, instrument, section, file_name, description, email
+        "SELECT member_id, name, instrument, section, description, email
          FROM members
          WHERE is_active = 1
          ORDER BY name ASC, member_id ASC"
@@ -411,25 +409,6 @@ function concertPerformanceUrl(array $row): ?string
     return partPerformanceFileUrl(rowStringValue($row, "performance_file_name"));
 }
 
-function memberPhotoUrl(?string $fileName): ?string
-{
-    $safeFileName = basename(str_replace("\\", "/", trim($fileName ?? "")));
-
-    if ($safeFileName === "" || !is_file(MEMBER_PHOTO_UPLOAD_DIR . DIRECTORY_SEPARATOR . $safeFileName)) {
-        return null;
-    }
-
-    return appUrl(MEMBER_PHOTO_UPLOAD_URL . "/" . rawurlencode($safeFileName));
-}
-
-function memberInitials(string $memberId): string
-{
-    $letters = preg_replace("/[^A-Za-z0-9]+/", "", $memberId) ?? "";
-    $initials = strtoupper(substr($letters, 0, 2));
-
-    return $initials !== "" ? $initials : "MC";
-}
-
 function appNavClass(string $page, string $activePage): string
 {
     return $page === $activePage ? "nav-link active" : "nav-link";
@@ -558,14 +537,32 @@ function saveUploadedFile(string $field, string $uploadDir, array $allowedExtens
         throw new RuntimeException("Upload folder could not be created.");
     }
 
+    if (!is_writable($uploadDir)) {
+        throw new RuntimeException("Upload folder is not writable.");
+    }
+
+    $tmpName = (string) ($file["tmp_name"] ?? "");
+    if ($tmpName === "" || !is_uploaded_file($tmpName)) {
+        throw new RuntimeException("Uploaded file is not available.");
+    }
+
     $fileName = uniqid("", true) . "." . $extension;
     $target = $uploadDir . DIRECTORY_SEPARATOR . $fileName;
 
-    if (!move_uploaded_file((string) $file["tmp_name"], $target)) {
-        throw new RuntimeException("Uploaded file could not be saved.");
+    if (move_uploaded_file($tmpName, $target)) {
+        return $fileName;
     }
 
-    return $fileName;
+    if (@rename($tmpName, $target)) {
+        return $fileName;
+    }
+
+    if (@copy($tmpName, $target)) {
+        @unlink($tmpName);
+        return $fileName;
+    }
+
+    throw new RuntimeException("Uploaded file could not be saved.");
 }
 
 function adminJsonResponse(bool $ok, string $message, int $status = 200): never

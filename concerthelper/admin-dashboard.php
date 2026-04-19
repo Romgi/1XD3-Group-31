@@ -92,7 +92,7 @@ require __DIR__ . "/includes/header.php";
 
         <article class="admin-card">
             <h2>Create Member</h2>
-            <form class="admin-form" id="create_member" method="post" action="actions/member_create.php" enctype="multipart/form-data">
+            <form class="admin-form" id="create_member" method="post" action="actions/member_create.php">
                 <div class="form-field">
                     <label for="member-name">Member Name</label>
                     <input id="member-name" name="member_name" type="text" maxlength="255" required>
@@ -114,10 +114,6 @@ require __DIR__ . "/includes/header.php";
                 <div class="form-field">
                     <label for="member-section">Section</label>
                     <input id="member-section" name="section" type="text" maxlength="191">
-                </div>
-                <div class="form-field">
-                    <label for="member-photo">Member Photo</label>
-                    <input id="member-photo" name="member_photo" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
                 </div>
                 <button class="button" type="submit">Save Member</button>
             </form>

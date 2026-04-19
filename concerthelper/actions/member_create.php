@@ -64,7 +64,6 @@ function buildMemberSaveQuery(array $columns): array
         "instrument" => ":instrument",
         "section" => ":section",
         "email" => ":email",
-        "file_name" => ":file_name",
         "description" => ":description",
     ];
 
@@ -76,15 +75,6 @@ function buildMemberSaveQuery(array $columns): array
         $insertColumns[] = $column;
         $insertValues[] = $binding;
         $usedBindings[] = $binding;
-
-        if ($column === "file_name") {
-            $updateAssignments[] =
-                "file_name = CASE
-                    WHEN VALUES(file_name) <> '' THEN VALUES(file_name)
-                    ELSE file_name
-                END";
-            continue;
-        }
 
         $updateAssignments[] = "{$column} = VALUES({$column})";
     }
@@ -111,19 +101,6 @@ function buildMemberSaveQuery(array $columns): array
 
     return [$sql, $usedBindings];
 }
-
-function deleteUploadedMemberPhoto(?string $photoFileName): void
-{
-    if ($photoFileName === null) {
-        return;
-    }
-
-    $uploadedFile = MEMBER_PHOTO_UPLOAD_DIR . DIRECTORY_SEPARATOR . $photoFileName;
-    if (is_file($uploadedFile)) {
-        unlink($uploadedFile);
-    }
-}
-
 function memberSaveErrorMessage(PDOException $exception): string
 {
     $sqlState = strtoupper((string) $exception->getCode());
@@ -185,8 +162,6 @@ if ($memberId === "") {
     $memberId = adminSlugId($memberName);
 }
 
-$photoFileName = null;
-
 try {
     $db = getDb();
     $columns = getMembersTableColumns($db);
@@ -231,8 +206,6 @@ try {
         }
     }
 
-    $photoFileName = saveUploadedFile("member_photo", MEMBER_PHOTO_UPLOAD_DIR, ["jpg", "jpeg", "png", "gif", "webp"]);
-
     [$query, $usedBindings] = buildMemberSaveQuery($columns);
     $statement = $db->prepare($query);
     $allValues = [
@@ -241,7 +214,6 @@ try {
         ":instrument" => $instrument !== "" ? $instrument : null,
         ":section" => $section !== "" ? $section : null,
         ":email" => $email !== "" ? $email : null,
-        ":file_name" => $photoFileName ?? "",
         ":description" => "",
     ];
     $queryValues = [];
@@ -249,20 +221,10 @@ try {
         $queryValues[$binding] = $allValues[$binding];
     }
     $statement->execute($queryValues);
-} catch (RuntimeException $exception) {
-    deleteUploadedMemberPhoto($photoFileName);
-    $message = $exception->getMessage();
-    if ($message === "Unsupported file type.") {
-        $message = "Member photo must be a JPG, PNG, GIF, or WebP file.";
-    }
-    error_log("ConcertHelper member create upload: " . $exception->getMessage());
-    adminJsonResponse(false, $message, 422);
 } catch (PDOException $exception) {
-    deleteUploadedMemberPhoto($photoFileName);
     error_log("ConcertHelper member create SQL [" . $exception->getCode() . "]: " . $exception->getMessage());
     adminJsonResponse(false, memberSaveErrorMessage($exception), memberSaveErrorStatus($exception));
 } catch (Throwable $exception) {
-    deleteUploadedMemberPhoto($photoFileName);
     error_log("ConcertHelper member create: " . $exception->getMessage());
     adminJsonResponse(false, "Member could not be saved.", 500);
 }

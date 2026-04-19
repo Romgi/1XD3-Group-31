@@ -53,15 +53,9 @@ require __DIR__ . "/includes/header.php";
                     $instrument = trim((string) ($member["instrument"] ?? ""));
                     $section = trim((string) ($member["section"] ?? ""));
                     $description = trim((string) ($member["description"] ?? ""));
-                    $photoUrl = memberPhotoUrl($member["file_name"] ?? null);
                     $summary = trim(implode(" | ", array_filter([$instrument, $section], static fn ($value): bool => $value !== "")));
                     ?>
                     <li class="member-card">
-                        <?php if ($photoUrl !== null): ?>
-                            <img class="member-photo" src="<?= e($photoUrl); ?>" alt="<?= e($memberName !== "" ? $memberName : $memberId); ?> profile photo" width="56" height="56">
-                        <?php else: ?>
-                            <span class="member-photo-placeholder" aria-hidden="true"><?= e(memberInitials($memberId)); ?></span>
-                        <?php endif; ?>
                         <span>
                             <strong><?= e($memberName !== "" ? $memberName : $memberId); ?></strong>
                             <?php if ($summary !== ""): ?>

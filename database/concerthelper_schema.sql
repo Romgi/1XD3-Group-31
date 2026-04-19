@@ -46,7 +46,6 @@ CREATE TABLE members (
     instrument VARCHAR(191) DEFAULT NULL,
     section VARCHAR(191) DEFAULT NULL,
     email VARCHAR(254) DEFAULT NULL,
-    file_name VARCHAR(255) NOT NULL DEFAULT '',
     description TEXT NOT NULL,
     is_active TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -188,11 +187,10 @@ INSERT INTO members (
     instrument,
     section,
     email,
-    file_name,
     description,
     is_active
 ) VALUES
-    ('macid1', 'Demo Member', 'Clarinet', 'Woodwinds', 'macid1@mcmaster.ca', '', 'Demo member account for testing member login.', 1);
+    ('macid1', 'Demo Member', 'Clarinet', 'Woodwinds', 'macid1@mcmaster.ca', 'Demo member account for testing member login.', 1);
 
 INSERT INTO users (
     user_id,

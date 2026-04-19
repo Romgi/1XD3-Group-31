@@ -267,6 +267,51 @@ a {
     text-align: center;
 }
 
+.dashboard-lead {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.dashboard-stack {
+    display: grid;
+    gap: 22px;
+}
+
+.dashboard-panel {
+    width: 100%;
+}
+
+.dashboard-request-text {
+    margin: 0 0 18px;
+    color: var(--muted);
+}
+
+.member-part-list {
+    display: grid;
+    gap: 16px;
+}
+
+.member-part-card {
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: #ffffff;
+}
+
+.member-part-card h3 {
+    margin: 0 0 14px;
+    color: var(--maroon);
+    line-height: 1.3;
+}
+
+.member-part-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .auth-card {
     width: min(720px, 100%);
     margin: 0 auto;
@@ -514,36 +559,27 @@ a {
 }
 
 .member-card {
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 12px;
-    align-items: center;
     padding: 12px 0;
+    line-height: 1.5;
     border-bottom: 1px solid var(--line);
+}
+
+.member-card strong {
+    display: inline-block;
+    margin-bottom: 2px;
+}
+
+.member-card > span {
+    display: block;
+    min-width: 0;
+}
+
+.member-card > span > span {
+    color: var(--muted);
 }
 
 .member-card:last-child {
     border-bottom: none;
-}
-
-.member-photo,
-.member-photo-placeholder {
-    width: 56px;
-    height: 56px;
-    border: 2px solid var(--gold);
-    border-radius: 2px;
-}
-
-.member-photo {
-    object-fit: cover;
-}
-
-.member-photo-placeholder {
-    display: grid;
-    place-items: center;
-    background: var(--maroon);
-    color: #ffffff;
-    font-weight: 800;
 }
 
 .parts-list {

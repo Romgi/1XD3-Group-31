@@ -10,7 +10,7 @@ This folder contains the PHP app for the McMaster Concert Band project.
 - `assets/css/`: app stylesheet.
 - `assets/js/`: browser JavaScript for admin form submission.
 - `assets/images/`: app images.
-- `assets/uploads/`: uploaded member photos, parts, and performance media.
+- `assets/uploads/`: uploaded part files and performance media.
 - `sql/legacy_member_examples.sql`: older reference SQL kept for archive purposes.
 
 ## Database
@@ -25,4 +25,3 @@ This folder contains the PHP app for the McMaster Concert Band project.
 
 - `login.php` authenticates against the `users` table and routes admins to `admin-dashboard.php` and members to `member-dashboard.php`.
 - `admin-dashboard.php` includes password management for existing user accounts.
-- Member images should be uploaded to `assets/uploads/members/`, with only the generated file name stored in `members.file_name`.

@@ -32,53 +32,60 @@ if ($memberId === null) {
         <p><?= e($loadError); ?></p>
     </section>
 <?php else: ?>
-    <p class="wireframe-lead">Welcome, <?= e($greeting); ?>!</p>
+    <section class="page-heading">
+        <h1>Member Dashboard</h1>
+        <p class="dashboard-lead">Welcome, <?= e($greeting); ?>!</p>
+    </section>
 
-    <section class="wireframe-card" aria-labelledby="my-parts-heading">
-        <h2 id="my-parts-heading">My Parts:</h2>
+    <section class="dashboard-stack" aria-label="Member dashboard sections">
+        <section class="wireframe-card dashboard-panel" aria-labelledby="my-parts-heading">
+            <h2 id="my-parts-heading">My Parts</h2>
 
-        <?php if ($parts === []): ?>
-            <p class="empty-parts">No parts assigned yet.</p>
-        <?php else: ?>
-            <ul class="parts-list plain-list">
-                <?php foreach ($parts as $part): ?>
-                    <?php
-                    $label = partDisplayLabel($part);
-                    $pdfUrl = partPdfUrl(isset($part["pdf_file_name"]) ? (string) $part["pdf_file_name"] : null);
-                    $playUrl = partPlayUrl($part);
-                    ?>
-                    <li class="parts-row">
-                        <span class="parts-row-label"><?= e($label); ?></span>
-                        <span class="parts-row-actions">
-                            <?php if ($pdfUrl !== null): ?>
-                                <a
-                                    class="part-icon part-icon-pdf"
-                                    href="<?= e($pdfUrl); ?>"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Open PDF for <?= e($label); ?>">PDF</a>
-                            <?php else: ?>
-                                <span class="part-icon-missing" title="PDF not on server">-</span>
-                            <?php endif; ?>
-                            <?php if ($playUrl !== null): ?>
-                                <a
-                                    class="part-icon part-icon-play"
-                                    href="<?= e($playUrl); ?>"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label="Open recording for <?= e($label); ?> (new tab)">Play</a>
-                            <?php else: ?>
-                                <span class="part-icon-missing" title="No external link or performance file">-</span>
-                            <?php endif; ?>
-                        </span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
+            <?php if ($parts === []): ?>
+                <p class="empty-parts">No parts assigned yet.</p>
+            <?php else: ?>
+                <div class="member-part-list">
+                    <?php foreach ($parts as $part): ?>
+                        <?php
+                        $label = partDisplayLabel($part);
+                        $pdfUrl = partPdfUrl(isset($part["pdf_file_name"]) ? (string) $part["pdf_file_name"] : null);
+                        $playUrl = partPlayUrl($part);
+                        ?>
+                        <article class="member-part-card">
+                            <h3><?= e($label); ?></h3>
+                            <div class="member-part-actions">
+                                <?php if ($pdfUrl !== null): ?>
+                                    <a
+                                        class="part-icon part-icon-pdf"
+                                        href="<?= e($pdfUrl); ?>"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Open PDF for <?= e($label); ?>">PDF</a>
+                                <?php else: ?>
+                                    <span class="part-icon-missing" title="PDF not on server">-</span>
+                                <?php endif; ?>
+                                <?php if ($playUrl !== null): ?>
+                                    <a
+                                        class="part-icon part-icon-play"
+                                        href="<?= e($playUrl); ?>"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Open recording for <?= e($label); ?> (new tab)">Play</a>
+                                <?php else: ?>
+                                    <span class="part-icon-missing" title="No external link or performance file">-</span>
+                                <?php endif; ?>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </section>
 
-        <p class="wireframe-actions">
+        <section class="wireframe-card dashboard-panel" aria-labelledby="request-part-heading">
+            <h2 id="request-part-heading">Request a Part</h2>
+            <p class="dashboard-request-text">Need a missing part or an updated file? Contact the professor directly.</p>
             <a class="button button-pill" href="mailto:professor@mcmaster.ca">Request a Part</a>
-        </p>
+        </section>
     </section>
 <?php endif; ?>
 <?php require __DIR__ . "/includes/footer.php"; ?>
