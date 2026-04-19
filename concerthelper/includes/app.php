@@ -25,8 +25,40 @@ function e(?string $value): string
     return htmlspecialchars($value ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
 
+function appBasePath(): string
+{
+    $scriptName = str_replace("\\", "/", (string) ($_SERVER["SCRIPT_NAME"] ?? ""));
+    $directory = str_replace("\\", "/", dirname($scriptName));
+
+    if ($directory === "." || $directory === "/") {
+        $directory = "";
+    }
+
+    if (str_ends_with($directory, "/actions")) {
+        $directory = substr($directory, 0, -strlen("/actions"));
+    }
+
+    return rtrim($directory, "/");
+}
+
+function appUrl(string $path = ""): string
+{
+    $base = appBasePath();
+    $normalizedPath = ltrim($path, "/");
+
+    if ($normalizedPath === "") {
+        return $base !== "" ? $base . "/" : "/";
+    }
+
+    return ($base !== "" ? $base : "") . "/" . $normalizedPath;
+}
+
 function redirectTo(string $location): never
 {
+    if (!preg_match('#^(?:[a-z][a-z0-9+.-]*:|/)#i', $location)) {
+        $location = appUrl($location);
+    }
+
     header("Location: {$location}");
     exit;
 }
@@ -90,7 +122,7 @@ function signOut(): void
 
 function dashboardUrlForRole(?string $role): string
 {
-    return $role === ROLE_ADMIN ? "admin-dashboard.php" : "member-dashboard.php";
+    return appUrl($role === ROLE_ADMIN ? "admin-dashboard.php" : "member-dashboard.php");
 }
 
 function currentDashboardUrl(): string
@@ -258,7 +290,7 @@ function partPdfUrl(?string $fileName): ?string
         return null;
     }
 
-    return PARTS_UPLOAD_URL . "/" . rawurlencode($safe);
+    return appUrl(PARTS_UPLOAD_URL . "/" . rawurlencode($safe));
 }
 
 function rowStringValue(array $row, string $column): ?string
@@ -348,7 +380,7 @@ function partPerformanceFileUrl(?string $fileName): ?string
         return null;
     }
 
-    return PERFORMANCES_UPLOAD_URL . "/" . rawurlencode($safe);
+    return appUrl(PERFORMANCES_UPLOAD_URL . "/" . rawurlencode($safe));
 }
 
 /**
@@ -387,7 +419,7 @@ function memberPhotoUrl(?string $fileName): ?string
         return null;
     }
 
-    return MEMBER_PHOTO_UPLOAD_URL . "/" . rawurlencode($safeFileName);
+    return appUrl(MEMBER_PHOTO_UPLOAD_URL . "/" . rawurlencode($safeFileName));
 }
 
 function memberInitials(string $memberId): string
@@ -504,8 +536,17 @@ function saveUploadedFile(string $field, string $uploadDir, array $allowedExtens
         return null;
     }
 
-    if (($file["error"] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-        throw new RuntimeException("Upload failed.");
+    $uploadError = (int) ($file["error"] ?? UPLOAD_ERR_OK);
+    if ($uploadError !== UPLOAD_ERR_OK) {
+        $message = match ($uploadError) {
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => "The uploaded file is too large.",
+            UPLOAD_ERR_PARTIAL => "The uploaded file did not finish uploading.",
+            UPLOAD_ERR_NO_TMP_DIR => "The server is missing a temporary upload folder.",
+            UPLOAD_ERR_CANT_WRITE => "The uploaded file could not be written to disk.",
+            UPLOAD_ERR_EXTENSION => "The uploaded file was blocked by the server.",
+            default => "Upload failed.",
+        };
+        throw new RuntimeException($message);
     }
 
     $extension = strtolower(pathinfo((string) ($file["name"] ?? ""), PATHINFO_EXTENSION));

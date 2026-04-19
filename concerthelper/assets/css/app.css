@@ -399,18 +399,23 @@ a {
 }
 
 .admin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    align-items: stretch;
     gap: 22px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-snap-type: x proximity;
 }
 
 .admin-card {
+    flex: 0 0 min(380px, calc(100vw - 56px));
     padding: 24px;
     border: 1px solid var(--line);
     border-top: 4px solid var(--gold);
     border-radius: 2px;
     background: var(--panel);
     box-shadow: 0 12px 28px rgba(22, 22, 22, 0.08);
+    scroll-snap-align: start;
 }
 
 .admin-card h2 {
@@ -683,6 +688,14 @@ a {
 
     .form-row {
         grid-template-columns: 1fr;
+    }
+
+    .admin-grid {
+        scroll-snap-type: none;
+    }
+
+    .admin-card {
+        flex-basis: min(100%, 420px);
     }
 
     .site-footer {

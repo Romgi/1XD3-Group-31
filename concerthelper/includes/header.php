@@ -16,7 +16,7 @@ $currentRole = currentRole();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($pageTitle); ?> | <?= e(APP_NAME); ?></title>
-    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="<?= e(appUrl("assets/css/app.css")); ?>">
 </head>
 
 <body>
@@ -24,20 +24,20 @@ $currentRole = currentRole();
     <div class="wireframe-shell">
         <header class="site-header">
             <div class="header-shell">
-                <a class="brand" href="index.php" aria-label="ConcertHelper home">
-                    <img class="brand-logo" src="images/logo.jpg" alt="ConcertHelper logo" width="48" height="48">
+                <a class="brand" href="<?= e(appUrl("index.php")); ?>" aria-label="ConcertHelper home">
+                    <img class="brand-logo" src="<?= e(appUrl("assets/images/logo.jpg")); ?>" alt="ConcertHelper logo" width="48" height="48">
                     <span class="brand-name">McMaster Concert Band</span>
                 </a>
 
                 <nav class="app-nav wireframe-nav" aria-label="ConcertHelper navigation">
-                    <a class="<?= e(appNavClass("home", $activePage)); ?>" href="index.php">Home</a>
-                    <a class="<?= e(appNavClass("members", $activePage)); ?>" href="members.php">Members</a>
-                    <a class="<?= e(appNavClass("concerts", $activePage)); ?>" href="concerts.php">Concerts</a>
+                    <a class="<?= e(appNavClass("home", $activePage)); ?>" href="<?= e(appUrl("index.php")); ?>">Home</a>
+                    <a class="<?= e(appNavClass("members", $activePage)); ?>" href="<?= e(appUrl("members.php")); ?>">Members</a>
+                    <a class="<?= e(appNavClass("concerts", $activePage)); ?>" href="<?= e(appUrl("concerts.php")); ?>">Concerts</a>
                     <?php if ($currentRole !== null): ?>
                         <a class="<?= e(appNavClass("dashboard", $activePage)); ?>" href="<?= e(currentDashboardUrl()); ?>">Dashboard</a>
-                        <a class="nav-link" href="logout.php">Logout</a>
+                        <a class="nav-link" href="<?= e(appUrl("logout.php")); ?>">Logout</a>
                     <?php else: ?>
-                        <a class="<?= e(appNavClass("login", $activePage)); ?>" href="login.php">Login</a>
+                        <a class="<?= e(appNavClass("login", $activePage)); ?>" href="<?= e(appUrl("login.php")); ?>">Login</a>
                     <?php endif; ?>
                 </nav>
             </div>

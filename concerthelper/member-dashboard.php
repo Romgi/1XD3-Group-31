@@ -23,7 +23,7 @@ if ($memberId === null) {
         $greeting = getMemberDisplayName($memberId);
     } catch (PDOException $exception) {
         error_log("ConcertHelper member dashboard: " . $exception->getMessage());
-        $loadError = "Parts could not be loaded. In phpMyAdmin, select your app database and import final_project.sql so the member_parts table exists.";
+        $loadError = "Parts could not be loaded. In phpMyAdmin, select your app database and import database/concerthelper_schema.sql so the member_parts table exists.";
     }
 }
 ?>

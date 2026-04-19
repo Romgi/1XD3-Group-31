@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Team Development Plan</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Team Development Plan</h1>
+        <p>McMaster Concert Band Website and Web Applications</p>
+        <nav>
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="about.html">About</a>
+            <a class="nav-link" href="showcase.html">Showcase</a>
+            <a class="nav-link" href="project.html">Project</a>
+            <a class="nav-link active" href="teamDevPlan.html">Team Development Plan</a>
+            <a class="nav-link" href="../concerthelper/index.php">ConcertHelper App</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="tile">
+            <h2>The Team: JMCH</h2>
+            <ul>
+                <li>Jonathan Graydon</li>
+                <li>Marco Carnegie</li>
+                <li>Charles Chen</li>
+                <li>Hanzhi Jiang</li>
+            </ul>
+            <p>
+                The group is designing a website and app for the McMaster Concert Band. The app is called
+                ConcertHelper.
+            </p>
+        </section>
+
+        <section class="tile">
+            <h2>The Purpose</h2>
+            <p>
+                The project provides a public information hub and an internal platform for music distribution and band
+                resources. It addresses two main needs: current band members need easy access to music parts,
+                reference recordings, and season information, while concertgoers need easy access to ensemble details,
+                upcoming concerts, past performances, and recordings.
+            </p>
+        </section>
+
+        <section class="tile">
+            <h2>Data Description</h2>
+            <p>The app stores several related types of data.</p>
+            <ul>
+                <li><strong>Recordings:</strong> reference recordings for specific parts and concerts.</li>
+                <li><strong>Parts:</strong> uploaded PDF music parts for each concert and instrument.</li>
+                <li><strong>Concerts:</strong> upcoming and past performance information.</li>
+                <li><strong>Members:</strong> public member information including photo, section, and description.</li>
+                <li><strong>Users:</strong> login accounts for administrators and band members.</li>
+            </ul>
+        </section>
+
+        <section class="tile">
+            <h2>Functions Performed By App</h2>
+            <h3>Admin</h3>
+            <ul>
+                <li>Add and update concerts.</li>
+                <li>Upload and update music parts.</li>
+                <li>Add reference recordings.</li>
+                <li>Create member profiles.</li>
+                <li>Assign members to parts and recordings.</li>
+                <li>Reset user passwords.</li>
+            </ul>
+            <h3>Band User</h3>
+            <ul>
+                <li>View assigned music parts.</li>
+                <li>Open associated reference recordings.</li>
+            </ul>
+            <h3>General User</h3>
+            <ul>
+                <li>View public member information.</li>
+                <li>View upcoming concerts.</li>
+                <li>Open past performances.</li>
+            </ul>
+        </section>
+
+        <section class="tile">
+            <h2>Roles of Team Members</h2>
+            <h3>Jonathan</h3>
+            <ul>
+                <li>Login page and members page.</li>
+            </ul>
+            <h3>Marco</h3>
+            <ul>
+                <li>Admin dashboard and member dashboard.</li>
+            </ul>
+            <h3>Charles</h3>
+            <ul>
+                <li>Home page and members dashboard.</li>
+            </ul>
+            <h3>Hanzhi</h3>
+            <ul>
+                <li>Home page and concerts page.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Wireframes</h2>
+            <div class="profiles">
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Home</h3>
+                    <img src="assets/images/Wireframe/Home Page.svg" alt="Home page wireframe">
+                </article>
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Members</h3>
+                    <img src="assets/images/Wireframe/Members Page.svg" alt="Members page wireframe">
+                </article>
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Concerts</h3>
+                    <img src="assets/images/Wireframe/Concerts page.svg" alt="Concerts page wireframe">
+                </article>
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Login</h3>
+                    <img src="assets/images/Wireframe/Login Page.svg" alt="Login page wireframe">
+                </article>
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Member Dashboard</h3>
+                    <img src="assets/images/Wireframe/Member Dashboard.svg" alt="Member dashboard wireframe">
+                </article>
+                <article class="tile profile-card">
+                    <h3 class="profile-name">Admin Dashboard</h3>
+                    <img src="assets/images/Wireframe/Admin Dashboard.svg" alt="Admin dashboard wireframe">
+                </article>
+            </div>
+        </section>
+
+        <section class="tile">
+            <h2>Increment</h2>
+            <p><strong>Due:</strong> Lab 13.2</p>
+            <p>
+                The increment should deliver fully functional web pages with minimal design. The focus is working
+                database-backed functionality for the roles and workflows described above.
+            </p>
+        </section>
+
+        <section class="tile">
+            <h2>Client Feedback</h2>
+            <p>
+                The client wanted the music library workflow to be easy for the conductor or librarian, asked for
+                simple access to reference recordings, and wanted the members list to be easy to update over time.
+            </p>
+        </section>
+    </main>
+</body>
+
+</html>

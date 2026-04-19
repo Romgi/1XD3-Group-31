@@ -23,7 +23,7 @@ try {
     $users = getAdminUserOptions();
 } catch (PDOException $exception) {
     error_log("ConcertHelper admin dashboard: " . $exception->getMessage());
-    $loadError = "Admin data could not be loaded. Confirm the database is set up with final_project.sql.";
+    $loadError = "Admin data could not be loaded. Confirm the database is set up with database/concerthelper_schema.sql.";
 }
 
 require __DIR__ . "/includes/header.php";
@@ -42,7 +42,7 @@ require __DIR__ . "/includes/header.php";
     <section class="admin-grid" aria-label="Admin management forms">
         <article class="admin-card">
             <h2>Create Concert</h2>
-            <form class="admin-form" id="concert" method="post" action="concert_create.php" enctype="multipart/form-data">
+            <form class="admin-form" id="concert" method="post" action="actions/concert_create.php" enctype="multipart/form-data">
                 <div class="form-field">
                     <label for="concert-title">Concert Title</label>
                     <input id="concert-title" name="title" type="text" required>
@@ -92,36 +92,32 @@ require __DIR__ . "/includes/header.php";
 
         <article class="admin-card">
             <h2>Create Member</h2>
-            <form class="admin-form" id="create_member" method="post" action="member_create.php" enctype="multipart/form-data">
+            <form class="admin-form" id="create_member" method="post" action="actions/member_create.php" enctype="multipart/form-data">
                 <div class="form-field">
                     <label for="member-name">Member Name</label>
-                    <input id="member-name" name="member_name" type="text" required>
+                    <input id="member-name" name="member_name" type="text" maxlength="255" required>
                 </div>
                 <div class="form-field">
                     <label for="member-id">Member ID</label>
-                    <input id="member-id" name="member_id" type="text" placeholder="macid">
+                    <input id="member-id" name="member_id" type="text" maxlength="191" placeholder="macid">
                 </div>
                 <div class="form-row">
                     <div class="form-field">
                         <label for="member-email">Email</label>
-                        <input id="member-email" name="email" type="email">
+                        <input id="member-email" name="email" type="email" maxlength="254">
                     </div>
                     <div class="form-field">
                         <label for="member-instrument">Instrument</label>
-                        <input id="member-instrument" name="instrument" type="text">
+                        <input id="member-instrument" name="instrument" type="text" maxlength="191">
                     </div>
                 </div>
                 <div class="form-field">
                     <label for="member-section">Section</label>
-                    <input id="member-section" name="section" type="text">
-                </div>
-                <div class="form-field">
-                    <label for="member-description">Description</label>
-                    <textarea id="member-description" name="member_description" rows="4"></textarea>
+                    <input id="member-section" name="section" type="text" maxlength="191">
                 </div>
                 <div class="form-field">
                     <label for="member-photo">Member Photo</label>
-                    <input id="member-photo" name="member_photo" type="file" accept="image/*">
+                    <input id="member-photo" name="member_photo" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
                 </div>
                 <button class="button" type="submit">Save Member</button>
             </form>
@@ -129,7 +125,7 @@ require __DIR__ . "/includes/header.php";
 
         <article class="admin-card">
             <h2>Upload Part</h2>
-            <form class="admin-form" id="part" method="post" action="part_create.php" enctype="multipart/form-data">
+            <form class="admin-form" id="part" method="post" action="actions/part_create.php" enctype="multipart/form-data">
                 <div class="form-field">
                     <label for="part-concert">Concert</label>
                     <select id="part-concert" name="concert_id" required>
@@ -153,7 +149,7 @@ require __DIR__ . "/includes/header.php";
 
         <article class="admin-card">
             <h2>Add Reference Recording</h2>
-            <form class="admin-form" id="recording_form" method="post" action="reference_create.php" enctype="multipart/form-data">
+            <form class="admin-form" id="recording_form" method="post" action="actions/reference_create.php" enctype="multipart/form-data">
                 <div class="form-field">
                     <label for="reference-name">Recording Name</label>
                     <input id="reference-name" name="reference_name" type="text" required>
@@ -190,7 +186,7 @@ require __DIR__ . "/includes/header.php";
 
         <article class="admin-card">
             <h2>Assign Member Part</h2>
-            <form class="admin-form" id="link_member" method="post" action="memberlink.php">
+            <form class="admin-form" id="link_member" method="post" action="actions/memberlink.php">
                 <div class="form-field">
                     <label for="link-member">Member</label>
                     <select id="link-member" name="member_id" required>
@@ -227,7 +223,7 @@ require __DIR__ . "/includes/header.php";
             <?php if ($users === []): ?>
                 <p class="empty-parts">No user accounts are available.</p>
             <?php else: ?>
-                <form class="admin-form" id="password_form" method="post" action="password_update.php">
+                <form class="admin-form" id="password_form" method="post" action="actions/password_update.php">
                     <div class="form-field">
                         <label for="password-user">User Account</label>
                         <select id="password-user" name="user_id" required>
@@ -261,6 +257,6 @@ require __DIR__ . "/includes/header.php";
         </article>
     </section>
 
-    <script src="adminmain.js" defer></script>
+    <script src="assets/js/adminmain.js" defer></script>
 <?php endif; ?>
 <?php require __DIR__ . "/includes/footer.php"; ?>

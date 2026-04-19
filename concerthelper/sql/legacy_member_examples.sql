@@ -1,0 +1,4 @@
+-- Legacy ConcertHelper SQL archive
+-- This file is kept only to preserve the old experimental member dashboard schema.
+-- The live app does not use this file.
+-- Use ../../database/concerthelper_schema.sql for the complete importable schema.
