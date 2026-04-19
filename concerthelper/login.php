@@ -93,7 +93,7 @@ require __DIR__ . "/includes/header.php";
 
         <div class="auth-actions">
             <button class="button" type="submit">Sign In</button>
-            <a href="mailto:concertband@mcmaster.ca">Trouble Signing In?</a>
+            <a href="mailto:professor@mcmaster.ca">Forgot Password?</a>
         </div>
     </form>
 </section>

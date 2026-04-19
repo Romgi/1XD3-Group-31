@@ -77,7 +77,7 @@ if ($memberId === null) {
         <?php endif; ?>
 
         <p class="wireframe-actions">
-            Part requests are not wired into the app yet. Contact the band admin if you need changes.
+            <a class="button button-pill" href="mailto:professor@mcmaster.ca">Request a Part</a>
         </p>
     </section>
 <?php endif; ?>

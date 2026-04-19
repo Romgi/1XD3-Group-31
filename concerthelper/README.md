@@ -5,6 +5,7 @@ This folder is the separate ConcertHelper app for the McMaster Concert Band proj
 Implemented now:
 
 - `login.php` authenticates a configured email/password account and routes admins to `admin-dashboard.php` and members to `member-dashboard.php`.
+- `admin-dashboard.php` includes a password management form so admins can reset passwords for existing user accounts.
 - `members.php` loads public ensemble member data from the `members` table.
 - `index.php`, `concerts.php`, `member-dashboard.php`, and `admin-dashboard.php` render the current app shell, public concert/member views, and admin/member workflows.
 

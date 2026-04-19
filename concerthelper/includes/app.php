@@ -467,6 +467,30 @@ function getAdminMemberOptions(): array
 }
 
 /**
+ * @return array<int, array<string, string>>
+ */
+function getAdminUserOptions(): array
+{
+    $db = getDb();
+    $statement = $db->query(
+        "SELECT
+            u.user_id,
+            u.email,
+            u.role,
+            u.member_id,
+            COALESCE(NULLIF(m.name, ''), NULLIF(u.member_id, ''), u.user_id, u.email) AS display_name
+         FROM users u
+         LEFT JOIN members m ON m.member_id = u.member_id
+         ORDER BY
+            CASE WHEN u.role = 'admin' THEN 0 ELSE 1 END,
+            display_name ASC,
+            u.email ASC"
+    );
+
+    return $statement->fetchAll();
+}
+
+/**
  * @param array<int, string> $allowedExtensions
  */
 function saveUploadedFile(string $field, string $uploadDir, array $allowedExtensions): ?string
@@ -528,6 +552,23 @@ function isValidTimeInput(string $value): bool
     $timeWithSeconds = DateTimeImmutable::createFromFormat("H:i:s", $value);
 
     return $timeWithSeconds !== false && $timeWithSeconds->format("H:i:s") === $value;
+}
+
+function validatePasswordInput(string $password): ?string
+{
+    if ($password === "") {
+        return "Enter a new password.";
+    }
+
+    if (strlen($password) < 8) {
+        return "Password must be at least 8 characters.";
+    }
+
+    if (strlen($password) > 72) {
+        return "Password must be 72 characters or fewer.";
+    }
+
+    return null;
 }
 
 function getConcertsByStatus(string $status): PDOStatement

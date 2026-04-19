@@ -13,12 +13,14 @@ $concerts = [];
 $parts = [];
 $members = [];
 $recordings = [];
+$users = [];
 
 try {
     $concerts = getAdminConcertOptions();
     $parts = getAdminPartOptions();
     $members = getAdminMemberOptions();
     $recordings = getAdminRecordingOptions();
+    $users = getAdminUserOptions();
 } catch (PDOException $exception) {
     error_log("ConcertHelper admin dashboard: " . $exception->getMessage());
     $loadError = "Admin data could not be loaded. Confirm the database is set up with final_project.sql.";
@@ -218,6 +220,44 @@ require __DIR__ . "/includes/header.php";
                 </div>
                 <button class="button" type="submit">Assign Part</button>
             </form>
+        </article>
+
+        <article class="admin-card">
+            <h2>Manage Passwords</h2>
+            <?php if ($users === []): ?>
+                <p class="empty-parts">No user accounts are available.</p>
+            <?php else: ?>
+                <form class="admin-form" id="password_form" method="post" action="password_update.php">
+                    <div class="form-field">
+                        <label for="password-user">User Account</label>
+                        <select id="password-user" name="user_id" required>
+                            <option value="">Choose a user</option>
+                            <?php foreach ($users as $user): ?>
+                                <?php
+                                $displayName = trim((string) ($user["display_name"] ?? ""));
+                                $email = trim((string) ($user["email"] ?? ""));
+                                $role = strtoupper((string) ($user["role"] ?? ""));
+                                $labelParts = array_filter([$displayName, $email], static fn ($value): bool => $value !== "");
+                                $label = implode(" - ", $labelParts);
+                                if ($label === "") {
+                                    $label = (string) ($user["user_id"] ?? "");
+                                }
+                                ?>
+                                <option value="<?= e($user["user_id"]); ?>"><?= e($label . " (" . $role . ")"); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="password-new">New Password</label>
+                        <input id="password-new" name="password" type="password" minlength="8" maxlength="72" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="password-confirm">Confirm Password</label>
+                        <input id="password-confirm" name="confirm_password" type="password" minlength="8" maxlength="72" required>
+                    </div>
+                    <button class="button" type="submit">Update Password</button>
+                </form>
+            <?php endif; ?>
         </article>
     </section>
 
