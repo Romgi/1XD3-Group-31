@@ -38,7 +38,6 @@ require __DIR__ . "/includes/header.php";
 <?php if ($loadError !== null): ?>
     <section class="page-heading admin-hero">
         <div class="admin-hero-copy">
-            <p class="admin-eyebrow">ConcertHelper Control Center</p>
             <h1>Admin Dashboard</h1>
             <p class="admin-hero-text">Manage concerts, member data, parts, recordings, and account access from one place.</p>
         </div>
@@ -49,7 +48,6 @@ require __DIR__ . "/includes/header.php";
 <?php else: ?>
     <section class="page-heading admin-hero">
         <div class="admin-hero-copy">
-            <p class="admin-eyebrow">ConcertHelper Control Center</p>
             <h1>Admin Dashboard</h1>
             <p class="admin-hero-text">Manage concerts, member data, parts, recordings, and account access from one place.</p>
         </div>

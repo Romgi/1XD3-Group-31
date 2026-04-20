@@ -481,15 +481,6 @@ a {
     margin-bottom: 10px;
 }
 
-.admin-eyebrow {
-    margin: 0 0 10px;
-    color: var(--maroon);
-    font-size: 0.8rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
 .admin-hero-text {
     margin: 0;
     max-width: 54ch;
