@@ -26,49 +26,19 @@ try {
     $loadError = "Admin data could not be loaded. Confirm the database is set up with database/concerthelper_schema.sql.";
 }
 
-$summaryCounts = [
-    ["label" => "Concerts", "value" => count($concerts)],
-    ["label" => "Parts", "value" => count($parts)],
-    ["label" => "Members", "value" => count($members)],
-    ["label" => "Accounts", "value" => count($users)],
-];
-
 require __DIR__ . "/includes/header.php";
 ?>
 <?php if ($loadError !== null): ?>
-    <section class="page-heading admin-hero">
-        <div class="admin-hero-copy">
-            <h1>Admin Dashboard</h1>
-            <p class="admin-hero-text">Manage concerts, member data, parts, recordings, and account access from one place.</p>
-        </div>
-    </section>
     <section class="alert" role="alert">
         <p><?= e($loadError); ?></p>
     </section>
 <?php else: ?>
-    <section class="page-heading admin-hero">
-        <div class="admin-hero-copy">
-            <h1>Admin Dashboard</h1>
-            <p class="admin-hero-text">Manage concerts, member data, parts, recordings, and account access from one place.</p>
-        </div>
-        <div class="admin-summary" aria-label="Admin summary">
-            <?php foreach ($summaryCounts as $item): ?>
-                <article class="admin-summary-card">
-                    <span class="admin-summary-value"><?= e((string) $item["value"]); ?></span>
-                    <span class="admin-summary-label"><?= e((string) $item["label"]); ?></span>
-                </article>
-            <?php endforeach; ?>
-        </div>
-    </section>
-
     <section class="admin-status" id="admin-status" aria-live="polite"></section>
 
     <section class="admin-layout" aria-label="Admin management forms">
         <section class="admin-column" aria-labelledby="admin-programming-heading">
             <header class="admin-column-heading">
-                <p class="admin-section-kicker">Programming</p>
                 <h2 id="admin-programming-heading">Concerts and Library</h2>
-                <p>Build each performance from the top down: concert details, assigned parts, and reference material.</p>
             </header>
 
             <article class="admin-card">
@@ -188,9 +158,7 @@ require __DIR__ . "/includes/header.php";
 
         <section class="admin-column" aria-labelledby="admin-people-heading">
             <header class="admin-column-heading">
-                <p class="admin-section-kicker">Operations</p>
                 <h2 id="admin-people-heading">Members and Access</h2>
-                <p>Set up the people side of the system: create member records, assign music, and manage sign-in credentials.</p>
             </header>
 
             <article class="admin-card">

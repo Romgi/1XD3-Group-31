@@ -17,13 +17,16 @@ require __DIR__ . "/includes/header.php";
             players from many disciplines across campus. Our mission is to prepare and perform quality
             wind band literature while building rewarding artistic experiences.
         </p>
-        <div class="image-placeholder wireframe-hero" aria-hidden="true">Image</div>
+        <img
+            class="feature-image wireframe-hero"
+            src="<?= e(appUrl("assets/images/large.webp")); ?>"
+            alt="McMaster Concert Band performing together">
     </div>
 
-    <div class="wireframe-icon-row" aria-hidden="true">
-        <span class="image-placeholder wireframe-thumb">Image</span>
-        <span class="image-placeholder wireframe-thumb">Image</span>
-        <span class="image-placeholder wireframe-thumb">Image</span>
+    <div class="wireframe-icon-row" aria-label="Concert band gallery">
+        <img class="gallery-image wireframe-thumb" src="<?= e(appUrl("assets/images/small1.webp")); ?>" alt="Concert band rehearsal moment">
+        <img class="gallery-image wireframe-thumb" src="<?= e(appUrl("assets/images/small2.webp")); ?>" alt="Concert band section close-up">
+        <img class="gallery-image wireframe-thumb" src="<?= e(appUrl("assets/images/small3.webp")); ?>" alt="Concert band performance detail">
     </div>
 
     <div class="wireframe-copy">

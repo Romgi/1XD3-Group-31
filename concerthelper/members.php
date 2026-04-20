@@ -25,11 +25,36 @@ require __DIR__ . "/includes/header.php";
     <div>
         <h2 id="conductor-profile">Conductor Profile</h2>
         <p>
-            Joseph Resendes conducts the McMaster Concert Band and the McMaster Symphony Orchestra
-            and has taught music at McMaster University.
+            Joseph Resendes is a Sessional Lecturer and Instructional Assistant at
+the School of the Arts at McMaster University in Hamilton, Ontario,
+Canada, where he conducts the McMaster University Concert Band,
+and teaches courses in conducting. Previously, he worked as a
+Lecturer at the University of Saskatchewan Department of Music.
+Joseph has extensive credits as an active conductor, composer,
+adjudicator, and clinician that has allowed him the privilege of working
+with many professionals and recording artists such as 'The Tenors'
+(formerly the Canadian Tenors), multiGrammy award winning
+producers like Steve Thompson, international tours with the 'Musica
+em Viagem' (Azores Musical Journey) Wind Ensemble, conducting the
+University of Saskatchewan Wind Orchestra, Northdale Concert Band,
+in addition to many highly acclaimed ensembles such as the University
+of North Texas Wind Symphony.
+Joseph currently holds degrees from York University (BFA -woodwind
+performance and conducting, MA - Composition) and is working
+towards the completion of a PhD in musicology focusing in the area of
+wind studies. As a conductor, Joseph receives regular invitations to
+conduct or guest conduct orchestras, chamber ensembles, and wind
+ensembles locally and abroad. Joseph's primary research interests
+include the dissemination of Canadian wind bands, literature, and
+Canadian music history. Research interests also include conducting,
+conducting pedagogy, and gesture as communication.
+
         </p>
     </div>
-    <div class="image-placeholder" aria-label="Conductor visual placeholder">Conductor</div>
+    <img
+        class="conductor-photo"
+        src="<?= e(appUrl("assets/images/conductor.webp")); ?>"
+        alt="Joseph Resendes conducting the McMaster Concert Band">
 </section>
 
 <?php if ($loadError !== null): ?>
