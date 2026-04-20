@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Stores shared constants and helper functions used by the ConcertHelper PHP pages and admin actions.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/connect.php";
@@ -11,6 +16,11 @@ const PARTS_UPLOAD_URL = "assets/uploads/parts";
 const PERFORMANCES_UPLOAD_DIR = __DIR__ . "/../assets/uploads/performances";
 const PERFORMANCES_UPLOAD_URL = "assets/uploads/performances";
 
+/**
+ * Starts the PHP session if one is not already active.
+ *
+ * @return void This function does not return a value.
+ */
 function startAppSession(): void
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -18,11 +28,22 @@ function startAppSession(): void
     }
 }
 
+/**
+ * Escapes text for safe HTML output.
+ *
+ * @param ?string $value The value to escape before printing into HTML.
+ * @return string The escaped string value.
+ */
 function e(?string $value): string
 {
     return htmlspecialchars($value ?? "", ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
 
+/**
+ * Determines the base URL path for the current app install.
+ *
+ * @return string The normalized base path for generated application URLs.
+ */
 function appBasePath(): string
 {
     $scriptName = str_replace("\\", "/", (string) ($_SERVER["SCRIPT_NAME"] ?? ""));
@@ -39,6 +60,12 @@ function appBasePath(): string
     return rtrim($directory, "/");
 }
 
+/**
+ * Builds an application-relative URL.
+ *
+ * @param string $path The path to append to the application base URL.
+ * @return string The completed URL for the requested app resource.
+ */
 function appUrl(string $path = ""): string
 {
     $base = appBasePath();
@@ -51,6 +78,12 @@ function appUrl(string $path = ""): string
     return ($base !== "" ? $base : "") . "/" . $normalizedPath;
 }
 
+/**
+ * Redirects the browser to another application URL and stops execution.
+ *
+ * @param string $location The target location or app-relative path to redirect to.
+ * @return never This function ends the request and does not return.
+ */
 function redirectTo(string $location): never
 {
     if (!preg_match('#^(?:[a-z][a-z0-9+.-]*:|/)#i', $location)) {
@@ -61,6 +94,13 @@ function redirectTo(string $location): never
     exit;
 }
 
+/**
+ * Checks a submitted email and password against the users table.
+ *
+ * @param string $email The email address entered by the user.
+ * @param string $password The plain-text password entered by the user.
+ * @return ?string The matched role when authentication succeeds, or null when it fails.
+ */
 function loginRole(string $email, string $password): ?string
 {
     $email = strtolower(trim($email));
@@ -84,6 +124,13 @@ function loginRole(string $email, string $password): ?string
     return in_array($role, [ROLE_ADMIN, ROLE_MEMBER], true) ? $role : null;
 }
 
+/**
+ * Stores the signed-in user's role and optional member ID in the session.
+ *
+ * @param string $role The authenticated role to store in the session.
+ * @param ?string $memberId The linked member ID for member accounts, or null for admins.
+ * @return void This function does not return a value.
+ */
 function signIn(string $role, ?string $memberId = null): void
 {
     startAppSession();
@@ -95,6 +142,11 @@ function signIn(string $role, ?string $memberId = null): void
     }
 }
 
+/**
+ * Reads the current member ID from the session.
+ *
+ * @return ?string The stored member ID, or null when none is available.
+ */
 function currentMemberId(): ?string
 {
     startAppSession();
@@ -103,6 +155,11 @@ function currentMemberId(): ?string
     return is_string($id) && $id !== "" ? $id : null;
 }
 
+/**
+ * Reads the current signed-in role from the session.
+ *
+ * @return ?string The current user role, or null when nobody is signed in.
+ */
 function currentRole(): ?string
 {
     startAppSession();
@@ -111,6 +168,11 @@ function currentRole(): ?string
     return is_string($role) ? $role : null;
 }
 
+/**
+ * Clears the current session and signs the user out.
+ *
+ * @return void This function does not return a value.
+ */
 function signOut(): void
 {
     startAppSession();
@@ -118,16 +180,32 @@ function signOut(): void
     session_destroy();
 }
 
+/**
+ * Chooses the correct dashboard URL for a role.
+ *
+ * @param ?string $role The role to map to a dashboard URL.
+ * @return string The dashboard URL for the supplied role.
+ */
 function dashboardUrlForRole(?string $role): string
 {
     return appUrl($role === ROLE_ADMIN ? "admin-dashboard.php" : "member-dashboard.php");
 }
 
+/**
+ * Returns the dashboard URL for the currently signed-in user.
+ *
+ * @return string The current user's dashboard URL.
+ */
 function currentDashboardUrl(): string
 {
     return dashboardUrlForRole(currentRole());
 }
 
+/**
+ * Checks whether the request expects a JSON response.
+ *
+ * @return bool True when the request accepts JSON, otherwise false.
+ */
 function requestWantsJson(): bool
 {
     $accept = strtolower((string) ($_SERVER["HTTP_ACCEPT"] ?? ""));
@@ -136,7 +214,11 @@ function requestWantsJson(): bool
 }
 
 /**
+ * Confirms that the current user has one of the allowed roles.
+ *
  * @param array<int, string> $allowedRoles
+ *     The list of roles that are allowed to access the current page or action.
+ * @return void This function redirects or exits when access is not allowed.
  */
 function requireRole(array $allowedRoles): void
 {
@@ -158,7 +240,10 @@ function requireRole(array $allowedRoles): void
 }
 
 /**
+ * Loads the active member roster from the database.
+ *
  * @return array<int, array<string, string>>
+ *     The active member records sorted by section, instrument, and name.
  */
 function getMembers(): array
 {
@@ -177,6 +262,12 @@ function getMembers(): array
     return $statement->fetchAll();
 }
 
+/**
+ * Finds the member ID associated with a login email.
+ *
+ * @param string $email The user email address to look up.
+ * @return ?string The linked member ID, or null when no match exists.
+ */
 function getMemberIdByEmail(string $email): ?string
 {
     $email = strtolower(trim($email));
@@ -199,7 +290,11 @@ function getMemberIdByEmail(string $email): ?string
 }
 
 /**
+ * Loads the parts and recordings assigned to a specific member.
+ *
+ * @param string $memberId The member ID whose assignments should be loaded.
  * @return array<int, array<string, mixed>>
+ *     The assigned part rows, including related concert and recording data.
  */
 function getMemberParts(string $memberId): array
 {
@@ -258,6 +353,12 @@ function getMemberParts(string $memberId): array
     return $statement->fetchAll();
 }
 
+/**
+ * Gets the display name for a member account.
+ *
+ * @param string $memberId The member ID to look up.
+ * @return string The member's name, or "Member" when no name is available.
+ */
 function getMemberDisplayName(string $memberId): string
 {
     $db = getDb();
@@ -277,6 +378,12 @@ function getMemberDisplayName(string $memberId): string
     return "Member";
 }
 
+/**
+ * Combines a concert title and part name into one display label.
+ *
+ * @param array<string, mixed> $row The database row containing piece and part labels.
+ * @return string The combined display label for the assigned part.
+ */
 function partDisplayLabel(array $row): string
 {
     $title = trim((string) ($row["piece_title"] ?? ""));
@@ -285,6 +392,12 @@ function partDisplayLabel(array $row): string
     return trim($title . " " . $label);
 }
 
+/**
+ * Builds the public URL for a stored PDF part file.
+ *
+ * @param ?string $fileName The saved part PDF filename.
+ * @return ?string The public URL for the PDF, or null when the file is missing.
+ */
 function partPdfUrl(?string $fileName): ?string
 {
     $safe = basename(str_replace("\\", "/", trim($fileName ?? "")));
@@ -295,6 +408,13 @@ function partPdfUrl(?string $fileName): ?string
     return appUrl(PARTS_UPLOAD_URL . "/" . rawurlencode($safe));
 }
 
+/**
+ * Reads a string value from an associative database row without case sensitivity.
+ *
+ * @param array<string, mixed> $row The database row to inspect.
+ * @param string $column The column name to retrieve.
+ * @return ?string The string value for the requested column, or null when absent.
+ */
 function rowStringValue(array $row, string $column): ?string
 {
     foreach ($row as $key => $value) {
@@ -315,8 +435,10 @@ function rowStringValue(array $row, string $column): ?string
 }
 
 /**
- * Safe external media URL (YouTube, Vimeo, Spotify, etc.).
- * Blocks localhost and non-http(s) schemes.
+ * Normalizes and validates an external media URL.
+ *
+ * @param ?string $url The URL entered by the user.
+ * @return ?string A safe external URL, or null when the value is invalid.
  */
 function normalizeExternalMediaUrl(?string $url): ?string
 {
@@ -347,13 +469,22 @@ function normalizeExternalMediaUrl(?string $url): ?string
 }
 
 /**
- * Safe external video URL (YouTube, Vimeo, etc.). DB column is still `youtube_url`.
+ * Normalizes the external recording URL stored for a part assignment.
+ *
+ * @param ?string $url The recording URL from the database row.
+ * @return ?string The safe external URL, or null when it is invalid.
  */
 function partExternalVideoUrl(?string $url): ?string
 {
     return normalizeExternalMediaUrl($url);
 }
 
+/**
+ * Determines the recording type label for a submitted recording URL.
+ *
+ * @param ?string $url The external recording URL provided by the admin.
+ * @return string The recording type string stored in the database.
+ */
 function recordingTypeForUrl(?string $url): string
 {
     $normalizedUrl = normalizeExternalMediaUrl($url);
@@ -373,7 +504,10 @@ function recordingTypeForUrl(?string $url): string
 }
 
 /**
- * Local video/audio file under assets/uploads/performances/ (basename only).
+ * Builds the public URL for an uploaded performance media file.
+ *
+ * @param ?string $fileName The saved recording or performance filename.
+ * @return ?string The public media URL, or null when the file is missing.
  */
 function partPerformanceFileUrl(?string $fileName): ?string
 {
@@ -386,9 +520,11 @@ function partPerformanceFileUrl(?string $fileName): ?string
 }
 
 /**
- * Play: external link (youtube_url column) if set and valid, else file in performances/.
+ * Chooses the best playback URL for a member part.
  *
  * @param array<string, mixed> $row
+ *     The assignment row containing external and uploaded recording fields.
+ * @return ?string The preferred playback URL, or null when no recording exists.
  */
 function partPlayUrl(array $row): ?string
 {
@@ -401,7 +537,11 @@ function partPlayUrl(array $row): ?string
 }
 
 /**
+ * Chooses the best performance URL for a concert card.
+ *
  * @param array<string, mixed> $row
+ *     The concert row containing external and uploaded performance fields.
+ * @return ?string The performance URL, or null when none is available.
  */
 function concertPerformanceUrl(array $row): ?string
 {
@@ -413,11 +553,24 @@ function concertPerformanceUrl(array $row): ?string
     return partPerformanceFileUrl(rowStringValue($row, "performance_file_name"));
 }
 
+/**
+ * Returns the CSS class for a navigation link.
+ *
+ * @param string $page The page identifier for the link being rendered.
+ * @param string $activePage The current active page identifier.
+ * @return string The CSS class string for the navigation link.
+ */
 function appNavClass(string $page, string $activePage): string
 {
     return $page === $activePage ? "nav-link active" : "nav-link";
 }
 
+/**
+ * Converts a label into a slug suitable for IDs and keys.
+ *
+ * @param string $value The source value to convert into a slug.
+ * @return string The generated slug.
+ */
 function adminSlugId(string $value): string
 {
     $slug = strtolower(trim($value));
@@ -428,7 +581,10 @@ function adminSlugId(string $value): string
 }
 
 /**
+ * Loads the concerts used in admin dropdown menus.
+ *
  * @return array<int, array<string, string>>
+ *     The concert option rows for the admin dashboard.
  */
 function getAdminConcertOptions(): array
 {
@@ -443,7 +599,10 @@ function getAdminConcertOptions(): array
 }
 
 /**
+ * Loads the parts used in admin dropdown menus.
+ *
  * @return array<int, array<string, string>>
+ *     The part option rows for the admin dashboard.
  */
 function getAdminPartOptions(): array
 {
@@ -459,7 +618,10 @@ function getAdminPartOptions(): array
 }
 
 /**
+ * Loads the recordings used in admin dropdown menus.
+ *
  * @return array<int, array<string, string>>
+ *     The recording option rows for the admin dashboard.
  */
 function getAdminRecordingOptions(): array
 {
@@ -474,7 +636,10 @@ function getAdminRecordingOptions(): array
 }
 
 /**
+ * Loads the members used in admin dropdown menus.
+ *
  * @return array<int, array<string, string>>
+ *     The member option rows for the admin dashboard.
  */
 function getAdminMemberOptions(): array
 {
@@ -482,7 +647,10 @@ function getAdminMemberOptions(): array
 }
 
 /**
+ * Loads the user accounts used in the admin password manager.
+ *
  * @return array<int, array<string, string>>
+ *     The user option rows for the admin dashboard.
  */
 function getAdminUserOptions(): array
 {
@@ -506,7 +674,13 @@ function getAdminUserOptions(): array
 }
 
 /**
+ * Saves an uploaded file into the requested upload directory.
+ *
+ * @param string $field The name of the uploaded file field in the request.
+ * @param string $uploadDir The server directory where the file should be saved.
  * @param array<int, string> $allowedExtensions
+ *     The lowercase list of allowed file extensions.
+ * @return ?string The generated saved filename, or null when no file was uploaded.
  */
 function saveUploadedFile(string $field, string $uploadDir, array $allowedExtensions): ?string
 {
@@ -569,6 +743,14 @@ function saveUploadedFile(string $field, string $uploadDir, array $allowedExtens
     throw new RuntimeException("Uploaded file could not be saved.");
 }
 
+/**
+ * Sends a JSON response for admin form submissions and ends execution.
+ *
+ * @param bool $ok True when the request succeeded, otherwise false.
+ * @param string $message The response message to send back to the browser.
+ * @param int $status The HTTP status code for the response.
+ * @return never This function outputs JSON and terminates the request.
+ */
 function adminJsonResponse(bool $ok, string $message, int $status = 200): never
 {
     http_response_code($status);
@@ -577,6 +759,12 @@ function adminJsonResponse(bool $ok, string $message, int $status = 200): never
     exit;
 }
 
+/**
+ * Validates a date string in YYYY-MM-DD format.
+ *
+ * @param string $value The date string to validate.
+ * @return bool True when the date is valid, otherwise false.
+ */
 function isValidDateInput(string $value): bool
 {
     $date = DateTimeImmutable::createFromFormat("Y-m-d", $value);
@@ -584,6 +772,12 @@ function isValidDateInput(string $value): bool
     return $date !== false && $date->format("Y-m-d") === $value;
 }
 
+/**
+ * Validates a time string in HH:MM or HH:MM:SS format.
+ *
+ * @param string $value The time string to validate.
+ * @return bool True when the time is valid, otherwise false.
+ */
 function isValidTimeInput(string $value): bool
 {
     $time = DateTimeImmutable::createFromFormat("H:i", $value);
@@ -596,6 +790,12 @@ function isValidTimeInput(string $value): bool
     return $timeWithSeconds !== false && $timeWithSeconds->format("H:i:s") === $value;
 }
 
+/**
+ * Validates a submitted password against the app password rules.
+ *
+ * @param string $password The plain-text password to validate.
+ * @return ?string An error message when validation fails, or null when valid.
+ */
 function validatePasswordInput(string $password): ?string
 {
     if ($password === "") {
@@ -613,6 +813,12 @@ function validatePasswordInput(string $password): ?string
     return null;
 }
 
+/**
+ * Loads concerts filtered by status for the public concerts page.
+ *
+ * @param string $status The concert status to load, such as upcoming or past.
+ * @return PDOStatement The prepared statement containing the matching concert rows.
+ */
 function getConcertsByStatus(string $status): PDOStatement
 {
     $db = getDb();

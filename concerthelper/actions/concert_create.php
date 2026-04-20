@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Creates or updates concerts, including optional performance links and uploaded media files.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";

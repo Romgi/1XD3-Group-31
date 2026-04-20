@@ -1,3 +1,10 @@
+<?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Renders the shared site footer and closes the main page layout markup.
+*/
+?>
     </main>
 
     <?php $footerRole = currentRole(); ?>

@@ -1,3 +1,16 @@
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Handles asynchronous admin dashboard form submissions and status message updates.
+*/
+
+/**
+ * Updates the admin status banner after a form submission.
+ *
+ * @param {string} message The message to display to the administrator.
+ * @param {boolean} isError Indicates whether the message represents an error state.
+ * @returns {void} This function does not return a value.
+ */
 function setAdminStatus(message, isError = false) {
     const status = document.getElementById("admin-status");
     if (!status) {
@@ -9,6 +22,12 @@ function setAdminStatus(message, isError = false) {
     status.classList.toggle("admin-status-success", !isError && message !== "");
 }
 
+/**
+ * Submits an admin form asynchronously and returns the response message.
+ *
+ * @param {HTMLFormElement} form The admin form element being submitted.
+ * @returns {Promise<string>} The resolved server response message.
+ */
 async function submitAdminForm(form) {
     const response = await fetch(form.action, {
         method: "POST",

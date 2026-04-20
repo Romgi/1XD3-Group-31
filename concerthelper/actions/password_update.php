@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Updates the password for a selected user account from the admin dashboard.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";

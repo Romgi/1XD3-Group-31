@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Deletes a member and removes the linked member user account.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";

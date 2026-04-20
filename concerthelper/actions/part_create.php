@@ -1,10 +1,21 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Uploads or replaces PDF concert parts for the admin dashboard.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";
 
 requireRole([ROLE_ADMIN]);
 
+/**
+ * Converts a PDO exception into a user-facing part save error message.
+ *
+ * @param PDOException $exception The database exception raised during part save.
+ * @return string The user-facing error message.
+ */
 function partSaveErrorMessage(PDOException $exception): string
 {
     $sqlState = strtoupper((string) $exception->getCode());
@@ -29,6 +40,12 @@ function partSaveErrorMessage(PDOException $exception): string
     return "Part could not be saved.";
 }
 
+/**
+ * Converts a PDO exception into an HTTP status code for part save failures.
+ *
+ * @param PDOException $exception The database exception raised during part save.
+ * @return int The HTTP status code that best matches the error.
+ */
 function partSaveErrorStatus(PDOException $exception): int
 {
     return match (strtoupper((string) $exception->getCode())) {

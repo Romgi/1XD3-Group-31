@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Assigns a member to a concert part and optionally links a reference recording.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";

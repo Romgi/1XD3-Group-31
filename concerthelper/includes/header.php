@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Starts the shared page layout and renders the site header and navigation.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/app.php";

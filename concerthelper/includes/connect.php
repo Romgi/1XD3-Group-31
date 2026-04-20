@@ -1,21 +1,15 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Creates the shared PDO database connection used throughout the ConcertHelper app.
+*/
 declare(strict_types=1);
 
-/*
-    Name: Jonathan Graydon
-    Date Created: April 1, 2026
-    File Description: Connects ConcertHelper to the course database with PDO.
-*/
-
 /**
- * Connects to the database.
+ * Creates the PDO connection used by the app.
  *
- * Override with env vars: DB_HOST, DB_NAME, DB_USER, DB_PASS.
- *
- * Defaults match the course database account. Override with environment variables
- * for local XAMPP or another deployment.
- *
- * @return PDO The database connection.
+ * @return PDO A configured PDO connection for the ConcertHelper MySQL database.
  */
 function getDb(): PDO
 {

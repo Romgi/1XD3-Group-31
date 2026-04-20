@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Renders the home page content for the McMaster Concert Band website.
+*/
 declare(strict_types=1);
 
 $pageTitle = "Home";

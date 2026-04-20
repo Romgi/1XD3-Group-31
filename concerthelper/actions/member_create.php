@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Creates or updates member records and ensures linked login accounts exist when an email is provided.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";
@@ -8,7 +13,11 @@ requireRole([ROLE_ADMIN]);
 const NEW_MEMBER_TEMP_PASSWORD = "temporarypassword";
 
 /**
+ * Reads the column definitions for the members table.
+ *
+ * @param PDO $db The database connection used to inspect the table structure.
  * @return array<string, array<string, mixed>>
+ *     The member table column metadata keyed by lowercase column name.
  */
 function getMembersTableColumns(PDO $db): array
 {
@@ -26,6 +35,12 @@ function getMembersTableColumns(PDO $db): array
     return $columns;
 }
 
+/**
+ * Determines the maximum character length for a column definition.
+ *
+ * @param array<string, mixed> $column The column metadata returned by SHOW COLUMNS.
+ * @return ?int The maximum length for varchar or char columns, or null otherwise.
+ */
 function memberColumnMaxLength(array $column): ?int
 {
     $type = strtolower(trim((string) ($column["Type"] ?? "")));
@@ -36,6 +51,15 @@ function memberColumnMaxLength(array $column): ?int
     return (int) $matches[1];
 }
 
+/**
+ * Builds a validation error message when a member field exceeds its column length.
+ *
+ * @param string $label The human-readable label for the field.
+ * @param string $value The submitted value to validate.
+ * @param array<string, array<string, mixed>> $columns The members table column metadata.
+ * @param string $column The database column name to validate against.
+ * @return ?string An error message when the field is too long, or null when valid.
+ */
 function memberLengthError(string $label, string $value, array $columns, string $column): ?string
 {
     if (!isset($columns[$column])) {
@@ -52,7 +76,11 @@ function memberLengthError(string $label, string $value, array $columns, string 
 }
 
 /**
+ * Builds the SQL statement and bindings needed to save a member row.
+ *
+ * @param array<string, array<string, mixed>> $columns The members table column metadata.
  * @return array{0: string, 1: array<int, string>}
+ *     The SQL string and the list of parameter bindings used in that query.
  */
 function buildMemberSaveQuery(array $columns): array
 {
@@ -103,6 +131,13 @@ function buildMemberSaveQuery(array $columns): array
 
     return [$sql, $usedBindings];
 }
+
+/**
+ * Converts a PDO exception into a user-facing member save error message.
+ *
+ * @param PDOException $exception The database exception raised during member save.
+ * @return string The user-facing error message.
+ */
 function memberSaveErrorMessage(PDOException $exception): string
 {
     $sqlState = strtoupper((string) $exception->getCode());
@@ -134,6 +169,12 @@ function memberSaveErrorMessage(PDOException $exception): string
     return "Member could not be saved.";
 }
 
+/**
+ * Converts a PDO exception into an HTTP status code for member save failures.
+ *
+ * @param PDOException $exception The database exception raised during member save.
+ * @return int The HTTP status code that best matches the error.
+ */
 function memberSaveErrorStatus(PDOException $exception): int
 {
     return match (strtoupper((string) $exception->getCode())) {
@@ -142,6 +183,14 @@ function memberSaveErrorStatus(PDOException $exception): int
     };
 }
 
+/**
+ * Creates or updates the linked user account for a member with an email address.
+ *
+ * @param PDO $db The database connection used to manage the user account.
+ * @param string $memberId The member ID that should own the login account.
+ * @param string $email The email address to store for the user account.
+ * @return void This function does not return a value.
+ */
 function ensureMemberUserAccount(PDO $db, string $memberId, string $email): void
 {
     $existingEmailStatement = $db->prepare(

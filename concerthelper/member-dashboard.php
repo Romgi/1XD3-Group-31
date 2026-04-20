@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Shows the signed-in member's assigned parts and contact link for requesting missing material.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/includes/app.php";

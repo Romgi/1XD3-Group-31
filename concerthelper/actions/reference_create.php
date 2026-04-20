@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Creates or updates reference recordings for concerts and optional part-specific assignments.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";

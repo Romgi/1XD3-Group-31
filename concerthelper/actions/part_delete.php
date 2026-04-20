@@ -1,4 +1,9 @@
 <?php
+/*
+    Name(s): Jonathan, Marco, Charles, Hanzhi
+    Date Created: April 2026
+    File Description: Deletes a part record and removes its uploaded PDF file from the server.
+*/
 declare(strict_types=1);
 
 require_once __DIR__ . "/../includes/app.php";
