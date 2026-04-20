@@ -17,44 +17,49 @@ try {
 
 require __DIR__ . "/includes/header.php";
 ?>
-<section class="page-heading">
+<section class="page-heading page-heading-feature">
+    <p class="section-tag">Members</p>
     <h1>McMaster Concert Band Members</h1>
+    <p class="page-heading-intro">Meet the conductor and the current ensemble roster.</p>
 </section>
 
 <section class="member-profile" aria-labelledby="conductor-profile">
-    <div>
-        <h2 id="conductor-profile">Conductor Profile</h2>
-        <p>
+    <div class="member-profile-copy">
+        <p class="section-tag">Conductor Profile</p>
+        <h2 id="conductor-profile">Joseph Resendes</h2>
+        <p class="member-profile-role">Conductor and instructor at McMaster University</p>
+        <div class="member-profile-body">
+            <p>
             Joseph Resendes is a Sessional Lecturer and Instructional Assistant at
-the School of the Arts at McMaster University in Hamilton, Ontario,
-Canada, where he conducts the McMaster University Concert Band,
-and teaches courses in conducting. Previously, he worked as a
-Lecturer at the University of Saskatchewan Department of Music.
-Joseph has extensive credits as an active conductor, composer,
-adjudicator, and clinician that has allowed him the privilege of working
-with many professionals and recording artists such as 'The Tenors'
-(formerly the Canadian Tenors), multiGrammy award winning
-producers like Steve Thompson, international tours with the 'Musica
-em Viagem' (Azores Musical Journey) Wind Ensemble, conducting the
-University of Saskatchewan Wind Orchestra, Northdale Concert Band,
-in addition to many highly acclaimed ensembles such as the University
-of North Texas Wind Symphony.
-Joseph currently holds degrees from York University (BFA -woodwind
-performance and conducting, MA - Composition) and is working
-towards the completion of a PhD in musicology focusing in the area of
-wind studies. As a conductor, Joseph receives regular invitations to
-conduct or guest conduct orchestras, chamber ensembles, and wind
-ensembles locally and abroad. Joseph's primary research interests
-include the dissemination of Canadian wind bands, literature, and
-Canadian music history. Research interests also include conducting,
-conducting pedagogy, and gesture as communication.
-
-        </p>
+            the School of the Arts at McMaster University in Hamilton, Ontario,
+            Canada, where he conducts the McMaster University Concert Band
+            and teaches courses in conducting. Previously, he worked as a
+            Lecturer at the University of Saskatchewan Department of Music.
+            </p>
+            <p>
+            Joseph has extensive credits as an active conductor, composer,
+            adjudicator, and clinician. He has worked with many professionals
+            and recording artists such as The Tenors, producers like Steve
+            Thompson, the Musica em Viagem Wind Ensemble, the University of
+            Saskatchewan Wind Orchestra, Northdale Concert Band, and other
+            acclaimed ensembles including the University of North Texas Wind
+            Symphony.
+            </p>
+            <p>
+            Joseph holds degrees from York University in woodwind performance,
+            conducting, and composition, and continues advanced research in wind
+            studies. His work focuses on Canadian wind band literature, music
+            history, conducting pedagogy, and gesture as communication.
+            </p>
+        </div>
     </div>
-    <img
-        class="conductor-photo"
-        src="<?= e(appUrl("assets/images/conductor.webp")); ?>"
-        alt="Joseph Resendes conducting the McMaster Concert Band">
+    <figure class="member-profile-media">
+        <img
+            class="conductor-photo"
+            src="<?= e(appUrl("assets/images/conductor.webp")); ?>"
+            alt="Joseph Resendes conducting the McMaster Concert Band">
+        <figcaption>Joseph Resendes leading the McMaster Concert Band.</figcaption>
+    </figure>
 </section>
 
 <?php if ($loadError !== null): ?>
@@ -69,8 +74,11 @@ conducting pedagogy, and gesture as communication.
 <?php else: ?>
     <section class="member-section-grid" aria-label="Ensemble members">
         <article class="member-section">
-            <h2>Ensemble Members</h2>
-            <ul>
+            <div class="member-section-header">
+                <h2>Ensemble Members</h2>
+                <p><?= e((string) count($members)); ?> active member<?= count($members) === 1 ? "" : "s"; ?> listed in the current roster.</p>
+            </div>
+            <ul class="member-list-grid">
                 <?php foreach ($members as $member): ?>
                     <?php
                     $memberId = (string) ($member["member_id"] ?? "");
@@ -81,15 +89,13 @@ conducting pedagogy, and gesture as communication.
                     $summary = trim(implode(" | ", array_filter([$instrument, $section], static fn ($value): bool => $value !== "")));
                     ?>
                     <li class="member-card">
-                        <span>
-                            <strong><?= e($memberName !== "" ? $memberName : $memberId); ?></strong>
-                            <?php if ($summary !== ""): ?>
-                                <br><span><?= e($summary); ?></span>
-                            <?php endif; ?>
-                            <?php if ($description !== ""): ?>
-                                <br><span><?= e($description); ?></span>
-                            <?php endif; ?>
-                        </span>
+                        <strong class="member-card-name"><?= e($memberName !== "" ? $memberName : $memberId); ?></strong>
+                        <?php if ($summary !== ""): ?>
+                            <p class="member-card-meta"><?= e($summary); ?></p>
+                        <?php endif; ?>
+                        <?php if ($description !== ""): ?>
+                            <p class="member-card-note"><?= e($description); ?></p>
+                        <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
