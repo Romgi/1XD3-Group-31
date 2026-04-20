@@ -9,7 +9,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
     adminJsonResponse(false, "POST is required.", 405);
 }
 
-$title = trim((string) ($_POST["title"] ?? $_POST["concert_name"] ?? ""));
+$title = trim((string) ($_POST["title"] ?? ""));
 $concertId = trim((string) ($_POST["concert_id"] ?? ""));
 $description = trim((string) ($_POST["description"] ?? ""));
 $date = trim((string) ($_POST["date"] ?? ""));

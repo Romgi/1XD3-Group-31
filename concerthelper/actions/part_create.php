@@ -41,7 +41,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
     adminJsonResponse(false, "POST is required.", 405);
 }
 
-$concertId = trim((string) ($_POST["concert_id"] ?? $_POST["concert_name"] ?? ""));
+$concertId = trim((string) ($_POST["concert_id"] ?? ""));
 $instrumentPart = trim((string) ($_POST["instrument_part"] ?? ""));
 
 if ($concertId === "" || $instrumentPart === "") {

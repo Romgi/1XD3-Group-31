@@ -29,7 +29,7 @@ $currentRole = currentRole();
                     <span class="brand-name">McMaster Concert Band</span>
                 </a>
 
-                <nav class="app-nav wireframe-nav" aria-label="ConcertHelper navigation">
+                <nav class="app-nav" aria-label="ConcertHelper navigation">
                     <a class="<?= e(appNavClass("home", $activePage)); ?>" href="<?= e(appUrl("index.php")); ?>">Home</a>
                     <a class="<?= e(appNavClass("members", $activePage)); ?>" href="<?= e(appUrl("members.php")); ?>">Members</a>
                     <a class="<?= e(appNavClass("concerts", $activePage)); ?>" href="<?= e(appUrl("concerts.php")); ?>">Concerts</a>

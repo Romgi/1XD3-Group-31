@@ -92,6 +92,23 @@ require __DIR__ . "/includes/header.php";
                 </form>
             </article>
 
+            <article class="admin-card admin-card-danger">
+                <h3>Delete Concert</h3>
+                <p class="admin-card-copy">Remove a concert and all linked parts, recordings, and member assignments from the system.</p>
+                <form class="admin-form" id="delete_concert" method="post" action="actions/concert_delete.php">
+                    <div class="form-field">
+                        <label for="delete-concert-id">Concert</label>
+                        <select id="delete-concert-id" name="concert_id" required>
+                            <option value="">Choose a concert</option>
+                            <?php foreach ($concerts as $concert): ?>
+                                <option value="<?= e($concert["concert_id"]); ?>"><?= e($concert["title"]); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button class="button button-danger" type="submit">Delete Concert</button>
+                </form>
+            </article>
+
             <article class="admin-card">
                 <h3>Upload Part</h3>
                 <p class="admin-card-copy">Attach a PDF part to a concert so players can open it from their dashboard.</p>

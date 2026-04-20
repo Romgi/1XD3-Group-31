@@ -160,7 +160,6 @@ a {
 }
 
 .page-heading,
-.todo-card,
 .wireframe-card,
 .auth-card,
 .member-profile,
@@ -174,7 +173,6 @@ a {
 }
 
 .page-heading,
-.todo-card,
 .wireframe-card,
 .member-profile,
 .member-section,
@@ -191,7 +189,6 @@ a {
 }
 
 .page-heading h1,
-.todo-card h1,
 .wireframe-card h2,
 .member-profile h2,
 .member-section h2 {
@@ -200,14 +197,9 @@ a {
     line-height: 1.2;
 }
 
-.todo-card p,
 .member-profile p,
 .empty-state p {
     margin: 0;
-}
-
-.wireframe-card p {
-    margin-top: 0;
 }
 
 .section-tag {
@@ -234,17 +226,6 @@ a {
 
 .wireframe-split>p {
     margin: 0;
-}
-
-.image-placeholder {
-    display: grid;
-    min-height: 150px;
-    place-items: center;
-    border: 1px solid var(--line-strong);
-    border-radius: 2px;
-    background: #e2e8ef;
-    color: var(--maroon);
-    font-weight: 800;
 }
 
 .wireframe-hero {
@@ -352,18 +333,6 @@ a {
 
 .wireframe-copy p:last-child {
     margin-bottom: 0;
-}
-
-.wireframe-lead {
-    margin: 0 0 20px;
-    padding: 0 4px;
-    font-size: 1.15rem;
-    font-weight: 800;
-}
-
-.wireframe-actions {
-    margin: 24px 0 0;
-    text-align: center;
 }
 
 .dashboard-lead {
@@ -1017,7 +986,6 @@ a {
 
     .auth-card,
     .page-heading,
-    .todo-card,
     .wireframe-card,
     .member-profile,
     .member-section,

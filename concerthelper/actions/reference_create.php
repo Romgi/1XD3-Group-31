@@ -10,7 +10,7 @@ if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
 }
 
 $referenceName = trim((string) ($_POST["reference_name"] ?? ""));
-$concertId = trim((string) ($_POST["concert_id"] ?? $_POST["concert_name"] ?? ""));
+$concertId = trim((string) ($_POST["concert_id"] ?? ""));
 $partId = trim((string) ($_POST["part_id"] ?? ""));
 $recordingUrl = trim((string) ($_POST["recording_url"] ?? ""));
 
