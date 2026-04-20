@@ -167,7 +167,11 @@ function getMembers(): array
         "SELECT member_id, name, instrument, section, description, email
          FROM members
          WHERE is_active = 1
-         ORDER BY name ASC, member_id ASC"
+         ORDER BY
+            COALESCE(NULLIF(section, ''), 'ZZZ') ASC,
+            COALESCE(NULLIF(instrument, ''), 'ZZZ') ASC,
+            name ASC,
+            member_id ASC"
     );
 
     return $statement->fetchAll();

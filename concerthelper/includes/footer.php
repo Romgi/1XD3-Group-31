@@ -26,8 +26,7 @@
 
             <section class="footer-contact" aria-labelledby="footer-contact-heading">
                 <h2 id="footer-contact-heading">Contact</h2>
-                <p><a href="mailto:concertband@mcmaster.ca">concertband@mcmaster.ca</a></p>
-                <p><a href="mailto:professor@mcmaster.ca">professor@mcmaster.ca</a></p>
+                <p><a href="mailto:professor@mcmaster.ca">resende@mcmaster.ca</a></p>
                 <p>McMaster University, Hamilton, Ontario</p>
             </section>
         </div>

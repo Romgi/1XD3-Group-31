@@ -5,6 +5,8 @@ require_once __DIR__ . "/../includes/app.php";
 
 requireRole([ROLE_ADMIN]);
 
+const NEW_MEMBER_TEMP_PASSWORD = "temporarypassword";
+
 /**
  * @return array<string, array<string, mixed>>
  */
@@ -140,6 +142,73 @@ function memberSaveErrorStatus(PDOException $exception): int
     };
 }
 
+function ensureMemberUserAccount(PDO $db, string $memberId, string $email): void
+{
+    $existingEmailStatement = $db->prepare(
+        "SELECT user_id, member_id
+         FROM users
+         WHERE LOWER(TRIM(email)) = LOWER(TRIM(:email))
+         LIMIT 1"
+    );
+    $existingEmailStatement->execute([":email" => $email]);
+    $emailOwner = $existingEmailStatement->fetch();
+
+    if ($emailOwner !== false) {
+        $emailOwnerUserId = (string) ($emailOwner["user_id"] ?? "");
+        $emailOwnerMemberId = $emailOwner["member_id"] !== null ? (string) $emailOwner["member_id"] : "";
+        if ($emailOwnerUserId !== $memberId && $emailOwnerMemberId !== $memberId) {
+            adminJsonResponse(false, "That email is already used by another user account.", 422);
+        }
+    }
+
+    $userStatement = $db->prepare(
+        "SELECT user_id
+         FROM users
+         WHERE user_id = :user_id OR member_id = :member_id
+         LIMIT 1"
+    );
+    $userStatement->execute([
+        ":user_id" => $memberId,
+        ":member_id" => $memberId,
+    ]);
+    $existingUser = $userStatement->fetch();
+
+    if ($existingUser === false) {
+        $hash = password_hash(NEW_MEMBER_TEMP_PASSWORD, PASSWORD_DEFAULT);
+        if (!is_string($hash) || $hash === "") {
+            throw new RuntimeException("Password hashing failed.");
+        }
+
+        $insertUser = $db->prepare(
+            "INSERT INTO users (user_id, member_id, email, password_hash, role)
+             VALUES (:user_id, :member_id, :email, :password_hash, :role)"
+        );
+        $insertUser->execute([
+            ":user_id" => $memberId,
+            ":member_id" => $memberId,
+            ":email" => $email,
+            ":password_hash" => $hash,
+            ":role" => ROLE_MEMBER,
+        ]);
+
+        return;
+    }
+
+    $updateUser = $db->prepare(
+        "UPDATE users
+         SET member_id = :member_id,
+             email = :email,
+             role = :role
+         WHERE user_id = :user_id OR member_id = :member_id"
+    );
+    $updateUser->execute([
+        ":member_id" => $memberId,
+        ":email" => $email,
+        ":role" => ROLE_MEMBER,
+        ":user_id" => $memberId,
+    ]);
+}
+
 if (($_SERVER["REQUEST_METHOD"] ?? "GET") !== "POST") {
     adminJsonResponse(false, "POST is required.", 405);
 }
@@ -206,6 +275,8 @@ try {
         }
     }
 
+    $db->beginTransaction();
+
     [$query, $usedBindings] = buildMemberSaveQuery($columns);
     $statement = $db->prepare($query);
     $allValues = [
@@ -221,12 +292,29 @@ try {
         $queryValues[$binding] = $allValues[$binding];
     }
     $statement->execute($queryValues);
+
+    if ($email !== "") {
+        ensureMemberUserAccount($db, $memberId, $email);
+    }
+
+    $db->commit();
 } catch (PDOException $exception) {
+    if (isset($db) && $db instanceof PDO && $db->inTransaction()) {
+        $db->rollBack();
+    }
     error_log("ConcertHelper member create SQL [" . $exception->getCode() . "]: " . $exception->getMessage());
     adminJsonResponse(false, memberSaveErrorMessage($exception), memberSaveErrorStatus($exception));
 } catch (Throwable $exception) {
+    if (isset($db) && $db instanceof PDO && $db->inTransaction()) {
+        $db->rollBack();
+    }
     error_log("ConcertHelper member create: " . $exception->getMessage());
     adminJsonResponse(false, "Member could not be saved.", 500);
 }
 
-adminJsonResponse(true, "Member saved.");
+$message = "Member saved.";
+if ($email !== "") {
+    $message = "Member saved. New login password: " . NEW_MEMBER_TEMP_PASSWORD;
+}
+
+adminJsonResponse(true, $message);

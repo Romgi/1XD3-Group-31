@@ -117,6 +117,23 @@ require __DIR__ . "/includes/header.php";
                 </form>
             </article>
 
+            <article class="admin-card admin-card-danger">
+                <h3>Delete Part</h3>
+                <p class="admin-card-copy">Remove a part assignment PDF from the library. Member links to that part will also be removed.</p>
+                <form class="admin-form" id="delete_part" method="post" action="actions/part_delete.php">
+                    <div class="form-field">
+                        <label for="delete-part-id">Part</label>
+                        <select id="delete-part-id" name="part_id" required>
+                            <option value="">Choose a part</option>
+                            <?php foreach ($parts as $part): ?>
+                                <option value="<?= e($part["part_id"]); ?>"><?= e($part["concert_title"] . " - " . $part["instrument_part"]); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button class="button button-danger" type="submit">Delete Part</button>
+                </form>
+            </article>
+
             <article class="admin-card">
                 <h3>Add Reference Recording</h3>
                 <p class="admin-card-copy">Give members a guide track or rehearsal recording for a concert or specific part.</p>
@@ -154,6 +171,23 @@ require __DIR__ . "/includes/header.php";
                     <button class="button" type="submit">Save Recording</button>
                 </form>
             </article>
+
+            <article class="admin-card admin-card-danger">
+                <h3>Delete Performance</h3>
+                <p class="admin-card-copy">Delete a saved reference recording or uploaded performance file from the system.</p>
+                <form class="admin-form" id="delete_recording" method="post" action="actions/recording_delete.php">
+                    <div class="form-field">
+                        <label for="delete-recording-id">Performance</label>
+                        <select id="delete-recording-id" name="recording_id" required>
+                            <option value="">Choose a performance</option>
+                            <?php foreach ($recordings as $recording): ?>
+                                <option value="<?= e($recording["recording_id"]); ?>"><?= e($recording["part_name"]); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button class="button button-danger" type="submit">Delete Performance</button>
+                </form>
+            </article>
         </section>
 
         <section class="admin-column" aria-labelledby="admin-people-heading">
@@ -188,6 +222,23 @@ require __DIR__ . "/includes/header.php";
                         <input id="member-section" name="section" type="text" maxlength="191">
                     </div>
                     <button class="button" type="submit">Save Member</button>
+                </form>
+            </article>
+
+            <article class="admin-card admin-card-danger">
+                <h3>Delete Member</h3>
+                <p class="admin-card-copy">Delete a member profile and their linked member account from the system.</p>
+                <form class="admin-form" id="delete_member" method="post" action="actions/member_delete.php">
+                    <div class="form-field">
+                        <label for="delete-member-id">Member</label>
+                        <select id="delete-member-id" name="member_id" required>
+                            <option value="">Choose a member</option>
+                            <?php foreach ($members as $member): ?>
+                                <option value="<?= e($member["member_id"]); ?>"><?= e(($member["name"] ?? "") !== "" ? $member["name"] : $member["member_id"]); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button class="button button-danger" type="submit">Delete Member</button>
                 </form>
             </article>
 
