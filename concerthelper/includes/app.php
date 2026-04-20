@@ -541,10 +541,6 @@ function saveUploadedFile(string $field, string $uploadDir, array $allowedExtens
         throw new RuntimeException("Upload folder could not be created.");
     }
 
-    if (!is_writable($uploadDir)) {
-        throw new RuntimeException("Upload folder is not writable.");
-    }
-
     $tmpName = (string) ($file["tmp_name"] ?? "");
     if ($tmpName === "" || !is_uploaded_file($tmpName)) {
         throw new RuntimeException("Uploaded file is not available.");
