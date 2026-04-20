@@ -32,12 +32,12 @@ if ($memberId === null) {
         <p><?= e($loadError); ?></p>
     </section>
 <?php else: ?>
-    <section class="page-heading">
-        <h1>Member Dashboard</h1>
-        <p class="dashboard-lead">Welcome, <?= e($greeting); ?>!</p>
-    </section>
+    <section class="member-dashboard-layout" aria-label="Member dashboard sections">
+        <section class="page-heading dashboard-panel">
+            <h1>Member Dashboard</h1>
+            <p class="dashboard-lead">Welcome, <?= e($greeting); ?>!</p>
+        </section>
 
-    <section class="dashboard-stack" aria-label="Member dashboard sections">
         <section class="wireframe-card dashboard-panel" aria-labelledby="my-parts-heading">
             <h2 id="my-parts-heading">My Parts</h2>
 

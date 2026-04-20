@@ -273,13 +273,25 @@ a {
     font-weight: 700;
 }
 
-.dashboard-stack {
-    display: grid;
+.member-dashboard-layout {
+    display: flex;
+    flex-direction: column;
     gap: 22px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
 }
 
-.dashboard-panel {
+.member-dashboard-layout > .dashboard-panel {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.member-dashboard-layout > .page-heading {
+    margin-bottom: 0;
 }
 
 .dashboard-request-text {
@@ -288,11 +300,19 @@ a {
 }
 
 .member-part-list {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .member-part-card {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     padding: 18px;
     border: 1px solid var(--line);
     border-radius: 2px;
@@ -310,6 +330,9 @@ a {
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .auth-card {
